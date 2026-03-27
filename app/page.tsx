@@ -8,6 +8,14 @@ import { RevenueBarChart } from "@/components/dashboard/revenue-bar-chart"
 import { AccumulatedChart } from "@/components/dashboard/accumulated-chart"
 import { EntriesDonutChart } from "@/components/dashboard/entries-donut-chart"
 import { PaymentsTable } from "@/components/dashboard/payments-table"
+import { RevenueExpensesChart } from "@/components/dashboard/revenue-expenses-chart"
+import { ExpensesCategoryChart } from "@/components/dashboard/expenses-category-chart"
+import { RevenueCategoryChart } from "@/components/dashboard/revenue-category-chart"
+import { DailyCashflowChart } from "@/components/dashboard/daily-cashflow-chart"
+import { TopClientsChart } from "@/components/dashboard/top-clients-chart"
+import { GrossProfitChart } from "@/components/dashboard/gross-profit-chart"
+import { InventoryChart } from "@/components/dashboard/inventory-chart"
+import { PredictabilityCards } from "@/components/dashboard/predictability-cards"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function DashboardPage() {
@@ -17,55 +25,78 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-[#0a1628]">
       <DashboardHeader />
 
-      <main className="p-6">
+      <main className="p-4 lg:p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="bg-[#0d1e36] border border-[#1e4976]">
+          <TabsList className="bg-[#0d1e36] border border-[#1e4976] flex-wrap h-auto gap-1 p-1">
             <TabsTrigger
               value="overview"
-              className="data-[state=active]:bg-[#1e4976] data-[state=active]:text-white text-[#8ca8c4]"
+              className="data-[state=active]:bg-[#1e4976] data-[state=active]:text-white text-[#8ca8c4] text-xs lg:text-sm"
             >
-              Visão Geral
+              Visao Geral
             </TabsTrigger>
             <TabsTrigger
-              value="details"
-              className="data-[state=active]:bg-[#1e4976] data-[state=active]:text-white text-[#8ca8c4]"
+              value="historico"
+              className="data-[state=active]:bg-[#1e4976] data-[state=active]:text-white text-[#8ca8c4] text-xs lg:text-sm"
+            >
+              Historico
+            </TabsTrigger>
+            <TabsTrigger
+              value="categorias"
+              className="data-[state=active]:bg-[#1e4976] data-[state=active]:text-white text-[#8ca8c4] text-xs lg:text-sm"
+            >
+              Categorias
+            </TabsTrigger>
+            <TabsTrigger
+              value="clientes"
+              className="data-[state=active]:bg-[#1e4976] data-[state=active]:text-white text-[#8ca8c4] text-xs lg:text-sm"
+            >
+              Clientes
+            </TabsTrigger>
+            <TabsTrigger
+              value="previsibilidade"
+              className="data-[state=active]:bg-[#1e4976] data-[state=active]:text-white text-[#8ca8c4] text-xs lg:text-sm"
+            >
+              Previsibilidade
+            </TabsTrigger>
+            <TabsTrigger
+              value="detalhes"
+              className="data-[state=active]:bg-[#1e4976] data-[state=active]:text-white text-[#8ca8c4] text-xs lg:text-sm"
             >
               Detalhes
             </TabsTrigger>
           </TabsList>
 
+          {/* Visao Geral */}
           <TabsContent value="overview" className="mt-6">
-            {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <KPICard
                 title="Receita Total"
                 value="R$ 1,31 Mi"
                 subtitle="Liquido R$ 872,66 Mil"
-                subtitle2="% Caixa Atual ▲ +66,6%"
+                subtitle2="% Caixa Atual +66,6%"
                 valueColor="positive"
               />
               <KPICard
-                title="Saídas"
+                title="Saidas"
                 value="-R$ 438,35 Mil"
-                subtitle2="% Saídas ▼ -33,4%"
+                subtitle2="% Saidas -33,4%"
                 valueColor="negative"
               />
               <KPICard
-                title="Média de Saídas Mensais"
+                title="Media de Saidas Mensais"
                 value="-R$ 73.058,80"
                 subtitle="Perpetuidade em Meses 11,94"
                 valueColor="negative"
               />
               <KPICard
-                title="Cartão Ticket Médio"
+                title="Cartao Ticket Medio"
                 value="R$ 1.992,42"
                 trend={17.3}
-                subtitle="Ticket Médio Previsto R$ 2.336,12"
+                subtitle="Ticket Medio Previsto R$ 2.336,12"
                 valueColor="positive"
               />
             </div>
 
-            {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
               <div className="lg:col-span-2">
                 <AccumulatedChart />
@@ -75,14 +106,64 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Forecast Chart */}
             <div className="mb-6">
               <ForecastChart />
             </div>
           </TabsContent>
 
-          <TabsContent value="details" className="mt-6">
-            {/* Forecast and Revenue Charts */}
+          {/* Historico */}
+          <TabsContent value="historico" className="mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+              <RevenueExpensesChart />
+              <DailyCashflowChart />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <GrossProfitChart />
+              <InventoryChart />
+            </div>
+          </TabsContent>
+
+          {/* Categorias */}
+          <TabsContent value="categorias" className="mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+              <RevenueCategoryChart />
+              <ExpensesCategoryChart />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <RevenueBarChart />
+              <InventoryChart />
+            </div>
+          </TabsContent>
+
+          {/* Clientes */}
+          <TabsContent value="clientes" className="mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+              <TopClientsChart />
+              <EntriesDonutChart />
+            </div>
+
+            <PaymentsTable />
+          </TabsContent>
+
+          {/* Previsibilidade */}
+          <TabsContent value="previsibilidade" className="mt-6">
+            <PredictabilityCards />
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+              <ForecastChart />
+              <DailyCashflowChart />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+              <GrossProfitChart />
+              <RevenueExpensesChart />
+            </div>
+          </TabsContent>
+
+          {/* Detalhes */}
+          <TabsContent value="detalhes" className="mt-6">
             <div className="mb-6">
               <ForecastChart />
             </div>
