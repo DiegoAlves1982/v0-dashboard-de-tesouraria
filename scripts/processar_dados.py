@@ -1,465 +1,363 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-Script para processamento de dados financeiros do Dashboard de Tesouraria.
-Pode ser executado standalone para processar arquivos CSV/JSON e gerar relatórios.
-
-Uso:
-    python processar_dados.py --arquivo dados.csv --saida resultado.json
-    python processar_dados.py --exemplo  # Gera dados de exemplo
+Script standalone para processar dados financeiros - Dashboard Tesouraria Sisloc
+Sem dependências externas, usa apenas biblioteca padrão Python
 """
 
 import json
 import csv
-import argparse
-from datetime import date, datetime, timedelta
-from pathlib import Path
-import random
-from typing import Optional
+from datetime import datetime, timedelta
+from typing import List, Dict
+from dataclasses import dataclass, asdict
+from collections import defaultdict
 
-from models import (
-    DadosFinanceiros, Transacao, TipoTransacao, CategoriaReceita,
-    CategoriaDespesa, StatusPagamento, Cliente, ItemEstoque
-)
-from calculadora import CalculadoraFinanceira
+# ============================================================================
+# MODELOS DE DADOS
+# ============================================================================
 
+@dataclass
+class Transacao:
+    """Representa uma transação financeira"""
+    data: str
+    tipo: str
+    categoria: str
+    valor: float
+    descricao: str
+    cliente_fornecedor: str
+    vencimento: str = None
 
-def parse_date(date_str: str) -> date:
-    """Converte string de data para objeto date."""
+@dataclass
+class IndicadorHistorico:
+    """Indicadores históricos calculados"""
+    receitas_por_vencimento: Dict
+    despesas_por_vencimento: Dict
+    despesas_por_categoria: Dict
+    receita_por_categoria: Dict
+    fluxo_caixa_diario: Dict
+    maiores_clientes: List[Dict]
+    lucro_bruto_por_mes: Dict
+    posicao_estoque: Dict
+
+@dataclass
+class IndicadorPrevisibilidade:
+    """Indicadores de previsibilidade"""
+    perpetuidade_caixa: float
+    ponto_equilibrio: float
+    ebitda: float
+    saldo_caixa_atual: float
+    receita_media_diaria: float
+    despesa_media_diaria: float
+    dias_de_caixa: float
+
+# ============================================================================
+# FUNÇÕES AUXILIARES
+# ============================================================================
+
+def parse_date(date_str: str) -> str:
+    """Valida e normaliza data para formato YYYY-MM-DD"""
     formatos = ["%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d"]
     for fmt in formatos:
         try:
-            return datetime.strptime(date_str, fmt).date()
+            dt = datetime.strptime(date_str, fmt)
+            return dt.strftime('%Y-%m-%d')
         except ValueError:
             continue
     raise ValueError(f"Formato de data não reconhecido: {date_str}")
 
-
-def carregar_csv(caminho: str) -> list[dict]:
-    """Carrega dados de um arquivo CSV."""
-    with open(caminho, 'r', encoding='utf-8-sig') as f:
-        reader = csv.DictReader(f, delimiter=';')
-        return list(reader)
-
-
-def carregar_json(caminho: str) -> dict:
-    """Carrega dados de um arquivo JSON."""
-    with open(caminho, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-
-def mapear_categoria_receita(categoria: str) -> Optional[CategoriaReceita]:
-    """Mapeia string de categoria para enum de receita."""
-    mapa = {
-        'locacao': CategoriaReceita.LOCACAO,
-        'locação': CategoriaReceita.LOCACAO,
-        'venda': CategoriaReceita.VENDA,
-        'servico': CategoriaReceita.SERVICOS,
-        'serviço': CategoriaReceita.SERVICOS,
-        'servicos': CategoriaReceita.SERVICOS,
-        'serviços': CategoriaReceita.SERVICOS,
-        'outros': CategoriaReceita.OUTROS,
-    }
-    return mapa.get(categoria.lower().strip(), CategoriaReceita.OUTROS)
-
-
-def mapear_categoria_despesa(categoria: str) -> Optional[CategoriaDespesa]:
-    """Mapeia string de categoria para enum de despesa."""
-    mapa = {
-        'folha': CategoriaDespesa.FOLHA_PAGAMENTO,
-        'folha de pagamento': CategoriaDespesa.FOLHA_PAGAMENTO,
-        'salario': CategoriaDespesa.FOLHA_PAGAMENTO,
-        'salários': CategoriaDespesa.FOLHA_PAGAMENTO,
-        'aluguel': CategoriaDespesa.ALUGUEL,
-        'imposto': CategoriaDespesa.IMPOSTOS,
-        'impostos': CategoriaDespesa.IMPOSTOS,
-        'tributos': CategoriaDespesa.IMPOSTOS,
-        'manutencao': CategoriaDespesa.MANUTENCAO,
-        'manutenção': CategoriaDespesa.MANUTENCAO,
-        'combustivel': CategoriaDespesa.COMBUSTIVEL,
-        'combustível': CategoriaDespesa.COMBUSTIVEL,
-        'fornecedor': CategoriaDespesa.FORNECEDORES,
-        'fornecedores': CategoriaDespesa.FORNECEDORES,
-        'outros': CategoriaDespesa.OUTROS,
-    }
-    return mapa.get(categoria.lower().strip(), CategoriaDespesa.OUTROS)
-
-
-def mapear_status(status: str) -> StatusPagamento:
-    """Mapeia string de status para enum."""
-    mapa = {
-        'pago': StatusPagamento.PAGO,
-        'pendente': StatusPagamento.PENDENTE,
-        'atrasado': StatusPagamento.ATRASADO,
-        'vencido': StatusPagamento.ATRASADO,
-        'em aberto': StatusPagamento.PENDENTE,
-    }
-    return mapa.get(status.lower().strip(), StatusPagamento.PENDENTE)
-
-
 def converter_valor(valor_str: str) -> float:
-    """Converte string de valor monetário para float."""
+    """Converte string de valor monetário para float"""
     if not valor_str:
         return 0.0
-    # Remove R$, espaços e pontos de milhar, substitui vírgula por ponto
     valor = valor_str.replace('R$', '').replace(' ', '').replace('.', '').replace(',', '.')
     try:
         return abs(float(valor))
     except ValueError:
         return 0.0
 
+# ============================================================================
+# CALCULADORA FINANCEIRA
+# ============================================================================
 
-def processar_csv_transacoes(linhas: list[dict]) -> list[Transacao]:
-    """
-    Processa linhas de CSV e converte para lista de Transações.
+class CalculadoraFinanceira:
+    """Calcula todos os indicadores financeiros"""
     
-    Espera colunas como:
-    - data ou data_lancamento
-    - data_vencimento ou vencimento
-    - valor
-    - tipo (receita/despesa)
-    - categoria
-    - descricao
-    - cliente_fornecedor ou entidade
-    - status
-    - empresa (opcional)
-    """
-    transacoes = []
+    def __init__(self, transacoes: List[Transacao]):
+        self.transacoes = transacoes
+        self.saldo_atual = 0
+        self.calcular_saldo()
     
-    for i, linha in enumerate(linhas):
-        # Normaliza chaves para minúsculas
-        linha = {k.lower().strip(): v for k, v in linha.items()}
-        
-        # Data
-        data_str = linha.get('data') or linha.get('data_lancamento') or linha.get('dt_lancamento')
-        data_venc_str = linha.get('data_vencimento') or linha.get('vencimento') or linha.get('dt_vencimento') or data_str
-        
-        if not data_str:
-            print(f"Aviso: Linha {i+1} sem data, pulando...")
-            continue
-        
-        try:
-            data = parse_date(data_str)
-            data_vencimento = parse_date(data_venc_str)
-        except ValueError as e:
-            print(f"Aviso: Linha {i+1} com data inválida ({e}), pulando...")
-            continue
-        
-        # Valor
-        valor = converter_valor(linha.get('valor', '0'))
-        if valor == 0:
-            continue
-        
-        # Tipo
-        tipo_str = linha.get('tipo', '').lower()
-        if 'receita' in tipo_str or 'entrada' in tipo_str or 'credito' in tipo_str:
-            tipo = TipoTransacao.RECEITA
-        elif 'despesa' in tipo_str or 'saida' in tipo_str or 'debito' in tipo_str:
-            tipo = TipoTransacao.DESPESA
-        else:
-            # Tenta inferir pelo valor (negativo = despesa)
-            valor_original = linha.get('valor', '0')
-            if '-' in valor_original:
-                tipo = TipoTransacao.DESPESA
+    def calcular_saldo(self):
+        for tx in self.transacoes:
+            if tx.tipo.lower() == 'receita':
+                self.saldo_atual += tx.valor
             else:
-                tipo = TipoTransacao.RECEITA
-        
-        # Categoria
-        categoria_str = linha.get('categoria', 'outros')
-        categoria_receita = None
-        categoria_despesa = None
-        
-        if tipo == TipoTransacao.RECEITA:
-            categoria_receita = mapear_categoria_receita(categoria_str)
-        else:
-            categoria_despesa = mapear_categoria_despesa(categoria_str)
-        
-        # Outros campos
-        descricao = linha.get('descricao') or linha.get('historico') or f"Transação {i+1}"
-        cliente_fornecedor = linha.get('cliente_fornecedor') or linha.get('entidade') or linha.get('nome') or "N/D"
-        status = mapear_status(linha.get('status', 'pendente'))
-        empresa = linha.get('empresa') or linha.get('empresa_origem')
-        
-        transacoes.append(Transacao(
-            id=linha.get('id') or f"TRX-{i+1:06d}",
-            data=data,
-            data_vencimento=data_vencimento,
-            valor=valor,
-            tipo=tipo,
-            categoria_receita=categoria_receita,
-            categoria_despesa=categoria_despesa,
-            descricao=descricao,
-            cliente_fornecedor=cliente_fornecedor,
-            status=status,
-            empresa_origem=empresa
-        ))
+                self.saldo_atual -= tx.valor
     
+    def receitas_por_vencimento(self) -> Dict:
+        resultado = defaultdict(float)
+        for tx in self.transacoes:
+            if tx.tipo.lower() == 'receita' and tx.vencimento:
+                resultado[tx.vencimento] += tx.valor
+        return dict(resultado)
+    
+    def despesas_por_vencimento(self) -> Dict:
+        resultado = defaultdict(float)
+        for tx in self.transacoes:
+            if tx.tipo.lower() == 'despesa' and tx.vencimento:
+                resultado[tx.vencimento] += tx.valor
+        return dict(resultado)
+    
+    def despesas_por_categoria(self) -> Dict:
+        resultado = defaultdict(float)
+        for tx in self.transacoes:
+            if tx.tipo.lower() == 'despesa':
+                resultado[tx.categoria] += tx.valor
+        return dict(resultado)
+    
+    def receita_por_categoria(self) -> Dict:
+        resultado = defaultdict(float)
+        for tx in self.transacoes:
+            if tx.tipo.lower() == 'receita':
+                resultado[tx.categoria] += tx.valor
+        return dict(resultado)
+    
+    def fluxo_caixa_diario(self) -> Dict:
+        resultado = defaultdict(lambda: {'receitas': 0, 'despesas': 0, 'saldo': 0})
+        for tx in self.transacoes:
+            if tx.tipo.lower() == 'receita':
+                resultado[tx.data]['receitas'] += tx.valor
+            else:
+                resultado[tx.data]['despesas'] += tx.valor
+        
+        saldo_acumulado = 0
+        for data in sorted(resultado.keys()):
+            saldo_acumulado += resultado[data]['receitas'] - resultado[data]['despesas']
+            resultado[data]['saldo'] = saldo_acumulado
+        
+        return dict(resultado)
+    
+    def maiores_clientes(self, top_n: int = 10) -> List[Dict]:
+        clientes = defaultdict(lambda: {'total': 0, 'transacoes': 0})
+        for tx in self.transacoes:
+            if tx.tipo.lower() == 'receita':
+                clientes[tx.cliente_fornecedor]['total'] += tx.valor
+                clientes[tx.cliente_fornecedor]['transacoes'] += 1
+        
+        resultado = []
+        for cliente, dados in clientes.items():
+            ticket_medio = dados['total'] / dados['transacoes'] if dados['transacoes'] > 0 else 0
+            resultado.append({
+                'cliente': cliente,
+                'total': round(dados['total'], 2),
+                'transacoes': dados['transacoes'],
+                'ticket_medio': round(ticket_medio, 2)
+            })
+        
+        return sorted(resultado, key=lambda x: x['total'], reverse=True)[:top_n]
+    
+    def lucro_bruto_por_mes(self) -> Dict:
+        resultado = defaultdict(lambda: {'receitas': 0, 'despesas': 0})
+        for tx in self.transacoes:
+            data_obj = datetime.strptime(tx.data, '%Y-%m-%d')
+            mes = data_obj.strftime('%Y-%m')
+            if tx.tipo.lower() == 'receita':
+                resultado[mes]['receitas'] += tx.valor
+            else:
+                resultado[mes]['despesas'] += tx.valor
+        
+        for mes in resultado:
+            resultado[mes]['lucro'] = resultado[mes]['receitas'] - resultado[mes]['despesas']
+            if resultado[mes]['receitas'] > 0:
+                resultado[mes]['margem'] = (resultado[mes]['lucro'] / resultado[mes]['receitas']) * 100
+        
+        return dict(resultado)
+    
+    def posicao_estoque(self) -> Dict:
+        estoque = defaultdict(float)
+        for tx in self.transacoes:
+            if tx.tipo.lower() == 'receita':
+                estoque[tx.categoria] += tx.valor
+            else:
+                estoque[tx.categoria] -= tx.valor
+        return dict(estoque)
+    
+    def perpetuidade_caixa(self) -> float:
+        if not self.transacoes:
+            return 0
+        dias = len(set(tx.data for tx in self.transacoes))
+        receita_total = sum(tx.valor for tx in self.transacoes if tx.tipo.lower() == 'receita')
+        return (receita_total / dias * 30) / 0.10 if dias > 0 else 0
+    
+    def ponto_equilibrio(self) -> float:
+        receita_total = sum(tx.valor for tx in self.transacoes if tx.tipo.lower() == 'receita')
+        despesa_fixa = sum(tx.valor for tx in self.transacoes if tx.tipo.lower() == 'despesa' and tx.categoria in ['Fixa', 'Operacional'])
+        return despesa_fixa
+    
+    def ebitda(self) -> float:
+        receita_total = sum(tx.valor for tx in self.transacoes if tx.tipo.lower() == 'receita')
+        despesa_operacional = sum(tx.valor for tx in self.transacoes if tx.tipo.lower() == 'despesa' and tx.categoria in ['Operacional', 'Variável'])
+        return receita_total - despesa_operacional
+    
+    def calcular_indicadores_previsibilidade(self) -> IndicadorPrevisibilidade:
+        fluxo = self.fluxo_caixa_diario()
+        dias = len(fluxo)
+        receita_total = sum(tx.valor for tx in self.transacoes if tx.tipo.lower() == 'receita')
+        despesa_total = sum(tx.valor for tx in self.transacoes if tx.tipo.lower() == 'despesa')
+        receita_media_diaria = receita_total / dias if dias > 0 else 0
+        despesa_media_diaria = despesa_total / dias if dias > 0 else 0
+        dias_de_caixa = self.saldo_atual / despesa_media_diaria if despesa_media_diaria > 0 else 0
+        
+        return IndicadorPrevisibilidade(
+            perpetuidade_caixa=self.perpetuidade_caixa(),
+            ponto_equilibrio=self.ponto_equilibrio(),
+            ebitda=self.ebitda(),
+            saldo_caixa_atual=self.saldo_atual,
+            receita_media_diaria=receita_media_diaria,
+            despesa_media_diaria=despesa_media_diaria,
+            dias_de_caixa=dias_de_caixa
+        )
+    
+    def calcular_indicadores_historico(self) -> IndicadorHistorico:
+        return IndicadorHistorico(
+            receitas_por_vencimento=self.receitas_por_vencimento(),
+            despesas_por_vencimento=self.despesas_por_vencimento(),
+            despesas_por_categoria=self.despesas_por_categoria(),
+            receita_por_categoria=self.receita_por_categoria(),
+            fluxo_caixa_diario=self.fluxo_caixa_diario(),
+            maiores_clientes=self.maiores_clientes(),
+            lucro_bruto_por_mes=self.lucro_bruto_por_mes(),
+            posicao_estoque=self.posicao_estoque()
+        )
+
+# ============================================================================
+# PROCESSAMENTO
+# ============================================================================
+
+def carregar_csv(caminho: str) -> List[Transacao]:
+    transacoes = []
+    try:
+        with open(caminho, 'r', encoding='utf-8') as f:
+            leitor = csv.DictReader(f, delimiter=',')
+            for i, linha in enumerate(leitor):
+                try:
+                    data = parse_date(linha['data'].strip())
+                    vencimento = parse_date(linha.get('vencimento', linha['data']).strip())
+                    tx = Transacao(
+                        data=data,
+                        tipo=linha['tipo'].strip().lower(),
+                        categoria=linha['categoria'].strip(),
+                        valor=converter_valor(linha['valor'].strip()),
+                        descricao=linha['descricao'].strip(),
+                        cliente_fornecedor=linha['cliente_fornecedor'].strip(),
+                        vencimento=vencimento
+                    )
+                    transacoes.append(tx)
+                except Exception as e:
+                    print(f"[AVISO] Linha {i+1}: {e}")
+                    continue
+    except FileNotFoundError:
+        print(f"[ERRO] Arquivo '{caminho}' não encontrado")
+    except Exception as e:
+        print(f"[ERRO] {e}")
     return transacoes
 
-
-def gerar_dados_exemplo() -> DadosFinanceiros:
-    """Gera conjunto de dados de exemplo para testes."""
-    data_fim = date.today()
-    data_inicio = data_fim - timedelta(days=120)
+def processar_arquivo(caminho: str) -> Dict:
+    print(f"\n{'='*80}")
+    print(f"PROCESSAMENTO DE DADOS FINANCEIROS - DASHBOARD TESOURARIA")
+    print(f"{'='*80}\n")
     
-    clientes = [
-        "VANNUCCI IMPORTADORA", "TRUCKS CONTROL", "VLP TRANSPORTES",
-        "CARBONI DISTRIBUIDORA", "ROBSON MACAGNANI", "MASA DISTRIBUIDORA",
-        "RG COMERCIO DE PECAS", "CUNHADOS DISTRIBUIDORA", "CARRETAO CURITIBA",
-        "BIANCO COMERCIO", "PNEUTEK COMERCIO", "FORTPEL COMERCIO"
-    ]
-    
-    fornecedores = [
-        "POSTO COMBUSTIVEL", "ENERGIA ELETRICA", "ALUGUEL SEDE",
-        "FOLHA PAGAMENTO", "IMPOSTOS FEDERAIS", "MANUTENCAO VEICULOS",
-        "FORNECEDOR PECAS", "SERVICOS TERCEIROS"
-    ]
-    
-    empresas = ["PR TRUCKS", "SIDER TRUCKS", "PR TRUCKS SERVICOS"]
-    
-    transacoes = []
-    
-    # Gerar receitas
-    for i in range(80):
-        dias_offset = random.randint(0, 120)
-        data = data_inicio + timedelta(days=dias_offset)
-        valor = random.uniform(1000, 50000)
-        
-        transacoes.append(Transacao(
-            id=f"REC-{i:04d}",
-            data=data,
-            data_vencimento=data + timedelta(days=random.randint(0, 30)),
-            valor=round(valor, 2),
-            tipo=TipoTransacao.RECEITA,
-            categoria_receita=random.choice(list(CategoriaReceita)),
-            descricao=f"Receita {i}",
-            cliente_fornecedor=random.choice(clientes),
-            status=random.choice(list(StatusPagamento)),
-            empresa_origem=random.choice(empresas)
-        ))
-    
-    # Gerar despesas
-    for i in range(60):
-        dias_offset = random.randint(0, 120)
-        data = data_inicio + timedelta(days=dias_offset)
-        valor = random.uniform(500, 30000)
-        
-        transacoes.append(Transacao(
-            id=f"DESP-{i:04d}",
-            data=data,
-            data_vencimento=data + timedelta(days=random.randint(0, 15)),
-            valor=round(valor, 2),
-            tipo=TipoTransacao.DESPESA,
-            categoria_despesa=random.choice(list(CategoriaDespesa)),
-            descricao=f"Despesa {i}",
-            cliente_fornecedor=random.choice(fornecedores),
-            status=random.choice(list(StatusPagamento)),
-            empresa_origem=random.choice(empresas)
-        ))
-    
-    # Gerar estoque
-    categorias_estoque = ["Caminhões", "Empilhadeiras", "Plataformas", "Geradores", "Compressores"]
-    estoque = []
-    
-    for i, cat in enumerate(categorias_estoque):
-        estoque.append(ItemEstoque(
-            id=f"EST-{i:04d}",
-            nome=f"Equipamento {cat}",
-            categoria=cat,
-            quantidade_disponivel=random.randint(5, 20),
-            quantidade_locada=random.randint(10, 40),
-            quantidade_manutencao=random.randint(1, 5),
-            valor_unitario=random.uniform(50000, 200000)
-        ))
-    
-    return DadosFinanceiros(
-        transacoes=transacoes,
-        clientes=[
-            Cliente(
-                id=f"CLI-{i:04d}",
-                nome=nome,
-                total_compras=random.uniform(50000, 500000),
-                quantidade_compras=random.randint(5, 50),
-                ticket_medio=random.uniform(5000, 20000)
-            )
-            for i, nome in enumerate(clientes)
-        ],
-        estoque=estoque,
-        saldo_inicial=500000,
-        data_inicio=data_inicio,
-        data_fim=data_fim,
-        empresa="Todas"
-    )
-
-
-def processar_arquivo(caminho: str, saldo_inicial: float = 0) -> DadosFinanceiros:
-    """
-    Processa arquivo CSV ou JSON e retorna DadosFinanceiros.
-    """
-    path = Path(caminho)
-    
-    if path.suffix.lower() == '.csv':
-        linhas = carregar_csv(caminho)
-        transacoes = processar_csv_transacoes(linhas)
-    elif path.suffix.lower() == '.json':
-        dados = carregar_json(caminho)
-        if isinstance(dados, list):
-            # Lista de transações
-            transacoes = processar_csv_transacoes(dados)
-        else:
-            # Objeto completo DadosFinanceiros
-            return DadosFinanceiros(**dados)
-    else:
-        raise ValueError(f"Formato de arquivo não suportado: {path.suffix}")
+    print(f"Carregando: {caminho}")
+    transacoes = carregar_csv(caminho)
     
     if not transacoes:
-        raise ValueError("Nenhuma transação válida encontrada no arquivo")
+        print("[ERRO] Nenhuma transação carregada")
+        return {}
     
-    # Determina período
-    datas = [t.data for t in transacoes]
-    data_inicio = min(datas)
-    data_fim = max(datas)
+    print(f"Transações carregadas: {len(transacoes)}\n")
     
-    return DadosFinanceiros(
-        transacoes=transacoes,
-        saldo_inicial=saldo_inicial,
-        data_inicio=data_inicio,
-        data_fim=data_fim
-    )
+    calc = CalculadoraFinanceira(transacoes)
+    historico = calc.calcular_indicadores_historico()
+    previsibilidade = calc.calcular_indicadores_previsibilidade()
+    
+    resultado = {
+        'timestamp': datetime.now().isoformat(),
+        'total_transacoes': len(transacoes),
+        'indicadores_historico': {
+            'receitas_por_vencimento': historico.receitas_por_vencimento,
+            'despesas_por_vencimento': historico.despesas_por_vencimento,
+            'despesas_por_categoria': historico.despesas_por_categoria,
+            'receita_por_categoria': historico.receita_por_categoria,
+            'fluxo_caixa_diario': historico.fluxo_caixa_diario,
+            'maiores_clientes': historico.maiores_clientes,
+            'lucro_bruto_por_mes': historico.lucro_bruto_por_mes,
+            'posicao_estoque': historico.posicao_estoque,
+        },
+        'indicadores_previsibilidade': asdict(previsibilidade)
+    }
+    
+    return resultado
 
-
-def formatar_moeda(valor: float) -> str:
-    """Formata valor como moeda brasileira."""
-    return f"R$ {valor:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
-
-
-def imprimir_relatorio(dashboard: dict):
-    """Imprime relatório formatado no terminal."""
-    kpis = dashboard['kpis']
-    prev = dashboard['previsibilidade']
-    
-    print("\n" + "=" * 60)
-    print("       DASHBOARD DE TESOURARIA - RELATÓRIO")
-    print("=" * 60)
-    
-    print("\n📊 KPIs PRINCIPAIS")
-    print("-" * 40)
-    print(f"  Receita Total:        {formatar_moeda(kpis['receita_total'])}")
-    print(f"  Despesa Total:        {formatar_moeda(kpis['despesa_total'])}")
-    print(f"  Lucro Líquido:        {formatar_moeda(kpis['lucro_liquido'])}")
-    print(f"  % Caixa:              {kpis['percentual_caixa']:.1f}%")
-    print(f"  Ticket Médio:         {formatar_moeda(kpis['ticket_medio'])}")
-    
-    print("\n📈 INDICADORES DE PREVISIBILIDADE")
-    print("-" * 40)
-    print(f"  Perpetuidade Caixa:   {formatar_moeda(prev['perpetuidade_caixa'])}")
-    print(f"  Perpetuidade (meses): {prev['perpetuidade_meses']:.1f}")
-    print(f"  Ponto de Equilíbrio:  {formatar_moeda(prev['ponto_equilibrio'])}")
-    print(f"  % do PE:              {prev['ponto_equilibrio_percentual']:.1f}%")
-    print(f"  EBITDA:               {formatar_moeda(prev['ebitda'])}")
-    print(f"  Margem EBITDA:        {prev['margem_ebitda']:.1f}%")
-    print(f"  Tendência:            {prev['tendencia'].upper()}")
-    
-    print("\n📁 CATEGORIAS DE RECEITA")
-    print("-" * 40)
-    for cat in dashboard['receitas_por_categoria'][:5]:
-        print(f"  {cat['categoria']:20} {formatar_moeda(cat['valor']):>15} ({cat['percentual']:.1f}%)")
-    
-    print("\n💸 CATEGORIAS DE DESPESA")
-    print("-" * 40)
-    for cat in dashboard['despesas_por_categoria'][:5]:
-        print(f"  {cat['categoria']:20} {formatar_moeda(cat['valor']):>15} ({cat['percentual']:.1f}%)")
-    
-    print("\n🏆 MAIORES CLIENTES")
-    print("-" * 40)
-    for cliente in dashboard['maiores_clientes'][:5]:
-        print(f"  {cliente['nome'][:25]:25} {formatar_moeda(cliente['total']):>15}")
-    
-    print("\n" + "=" * 60)
-
-
-def main():
-    parser = argparse.ArgumentParser(
-        description='Processador de dados financeiros para Dashboard de Tesouraria'
-    )
-    parser.add_argument(
-        '--arquivo', '-a',
-        help='Caminho para arquivo CSV ou JSON com os dados financeiros'
-    )
-    parser.add_argument(
-        '--saida', '-s',
-        help='Caminho para salvar resultado em JSON'
-    )
-    parser.add_argument(
-        '--saldo', '-b',
-        type=float,
-        default=0,
-        help='Saldo inicial do caixa (default: 0)'
-    )
-    parser.add_argument(
-        '--exemplo', '-e',
-        action='store_true',
-        help='Gera dados de exemplo para teste'
-    )
-    parser.add_argument(
-        '--formato-csv',
-        action='store_true',
-        help='Mostra formato esperado do CSV'
-    )
-    
-    args = parser.parse_args()
-    
-    if args.formato_csv:
-        print("\n📋 FORMATO ESPERADO DO CSV:")
-        print("-" * 50)
-        print("Colunas obrigatórias:")
-        print("  - data (ou data_lancamento): YYYY-MM-DD ou DD/MM/YYYY")
-        print("  - valor: número ou R$ X.XXX,XX")
-        print("")
-        print("Colunas opcionais:")
-        print("  - data_vencimento: data de vencimento")
-        print("  - tipo: receita, despesa, entrada, saida")
-        print("  - categoria: locacao, venda, servicos, folha, etc.")
-        print("  - descricao: descrição da transação")
-        print("  - cliente_fornecedor: nome do cliente ou fornecedor")
-        print("  - status: pago, pendente, atrasado")
-        print("  - empresa: empresa de origem")
-        print("")
-        print("Exemplo de linha:")
-        print("data;valor;tipo;categoria;cliente_fornecedor")
-        print("2026-01-15;15000.00;receita;locacao;CLIENTE XYZ")
+def exibir_relatorio(resultado: Dict):
+    if not resultado:
         return
     
-    # Carrega ou gera dados
-    if args.exemplo:
-        print("Gerando dados de exemplo...")
-        dados = gerar_dados_exemplo()
-    elif args.arquivo:
-        print(f"Processando arquivo: {args.arquivo}")
-        dados = processar_arquivo(args.arquivo, args.saldo)
-    else:
-        print("Use --arquivo para processar um arquivo ou --exemplo para dados de teste")
-        print("Use --help para ver todas as opções")
-        return
+    print(f"{'='*80}")
+    print("RELATÓRIO DE INDICADORES FINANCEIROS")
+    print(f"{'='*80}\n")
     
-    print(f"Total de transações: {len(dados.transacoes)}")
-    print(f"Período: {dados.data_inicio} a {dados.data_fim}")
+    print(f"Data: {resultado['timestamp']}")
+    print(f"Transações: {resultado['total_transacoes']}\n")
     
-    # Processa dados
-    calculadora = CalculadoraFinanceira(dados)
-    dashboard = calculadora.calcular_dashboard_completo()
+    historico = resultado['indicadores_historico']
+    prev = resultado['indicadores_previsibilidade']
     
-    # Converte para dict
-    resultado = dashboard.model_dump()
+    print(f"{'─'*80}\nINDICADORES HISTÓRICOS\n{'─'*80}\n")
     
-    # Salva ou imprime
-    if args.saida:
-        with open(args.saida, 'w', encoding='utf-8') as f:
-            json.dump(resultado, f, ensure_ascii=False, indent=2, default=str)
-        print(f"\nResultado salvo em: {args.saida}")
+    print("📊 RECEITAS POR VENCIMENTO:")
+    for data, valor in sorted(historico['receitas_por_vencimento'].items())[-5:]:
+        print(f"  {data}: R$ {valor:,.2f}")
     
-    # Sempre imprime relatório resumido
-    imprimir_relatorio(resultado)
+    print("\n📊 DESPESAS POR VENCIMENTO:")
+    for data, valor in sorted(historico['despesas_por_vencimento'].items())[-5:]:
+        print(f"  {data}: R$ {valor:,.2f}")
+    
+    print("\n💰 RECEITA POR CATEGORIA:")
+    for cat, valor in sorted(historico['receita_por_categoria'].items(), key=lambda x: x[1], reverse=True)[:5]:
+        print(f"  {cat}: R$ {valor:,.2f}")
+    
+    print("\n💸 DESPESA POR CATEGORIA:")
+    for cat, valor in sorted(historico['despesas_por_categoria'].items(), key=lambda x: x[1], reverse=True)[:5]:
+        print(f"  {cat}: R$ {valor:,.2f}")
+    
+    print("\n🏆 MAIORES CLIENTES:")
+    for cli in historico['maiores_clientes'][:5]:
+        print(f"  {cli['cliente']}: R$ {cli['total']:,.2f} ({cli['transacoes']} transações, ticket médio R$ {cli['ticket_medio']:,.2f})")
+    
+    print(f"\n{'─'*80}\nINDICADORES DE PREVISIBILIDADE\n{'─'*80}\n")
+    
+    print(f"Saldo Caixa: R$ {prev['saldo_caixa_atual']:,.2f}")
+    print(f"Receita Média Diária: R$ {prev['receita_media_diaria']:,.2f}")
+    print(f"Despesa Média Diária: R$ {prev['despesa_media_diaria']:,.2f}")
+    print(f"Dias de Caixa: {prev['dias_de_caixa']:.2f} dias")
+    print(f"Perpetuidade: R$ {prev['perpetuidade_caixa']:,.2f}")
+    print(f"Ponto Equilíbrio: R$ {prev['ponto_equilibrio']:,.2f}")
+    print(f"EBITDA: R$ {prev['ebitda']:,.2f}")
+    
+    print(f"\n{'='*80}\n")
 
+def salvar_json(resultado: Dict, caminho: str = 'resultado.json'):
+    try:
+        with open(caminho, 'w', encoding='utf-8') as f:
+            json.dump(resultado, f, indent=2, ensure_ascii=False)
+        print(f"✓ Resultado salvo: {caminho}\n")
+    except Exception as e:
+        print(f"[ERRO] {e}\n")
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    import sys
+    arquivo = sys.argv[1] if len(sys.argv) > 1 else 'dados_exemplo.csv'
+    resultado = processar_arquivo(arquivo)
+    exibir_relatorio(resultado)
+    salvar_json(resultado)
+    print("✓ Processamento concluído!")
