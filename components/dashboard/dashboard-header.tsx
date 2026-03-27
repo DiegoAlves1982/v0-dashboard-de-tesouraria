@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { Calendar, ChevronDown, Download, RefreshCw, Settings, Bell, User, Printer, X, Check, Moon, Sun, LogOut, HelpCircle, FileText, Database, Palette, Volume2, VolumeX, Globe } from "lucide-react"
+import { Calendar, Download, RefreshCw, Bell, Printer, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -18,25 +18,13 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
-import { Switch } from "@/components/ui/switch"
-import { Input } from "@/components/ui/input"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
@@ -68,17 +56,7 @@ export function DashboardHeader() {
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications)
   const [showNotifications, setShowNotifications] = useState(false)
   
-  // Settings state
-  const [showSettings, setShowSettings] = useState(false)
-  const [darkMode, setDarkMode] = useState(true)
-  const [soundEnabled, setSoundEnabled] = useState(true)
-  const [autoRefresh, setAutoRefresh] = useState(false)
-  const [refreshInterval, setRefreshInterval] = useState("30")
-  const [language, setLanguage] = useState("pt-BR")
-  const [currency, setCurrency] = useState("BRL")
-  
-  // Profile state
-  const [showProfile, setShowProfile] = useState(false)
+
 
   const unreadCount = notifications.filter(n => !n.read).length
 
@@ -157,18 +135,7 @@ export function DashboardHeader() {
     }
   }
 
-  const handleSaveSettings = () => {
-    // Save settings logic - would typically save to localStorage or API
-    localStorage.setItem("dashboard_settings", JSON.stringify({
-      darkMode,
-      soundEnabled,
-      autoRefresh,
-      refreshInterval,
-      language,
-      currency
-    }))
-    setShowSettings(false)
-  }
+
 
   return (
     <header className="flex items-center justify-between px-4 lg:px-6 py-4 bg-[#0a1628] border-b border-[#1e4976]">
@@ -410,225 +377,8 @@ export function DashboardHeader() {
             </PopoverContent>
           </Popover>
 
-          {/* Settings Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
-            title="Configuracoes"
-            onClick={() => setShowSettings(true)}
-          >
-            <Settings className="h-4 w-4" />
-          </Button>
-
-          {/* User Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
-                title="Usuario"
-              >
-                <User className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-[#0d1e36] border-[#1e4976]" align="end">
-              <DropdownMenuLabel className="text-[#8ca8c4]">
-                <div className="flex flex-col">
-                  <span className="text-white">Admin</span>
-                  <span className="text-xs">admin@conth.com.br</span>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-[#1e4976]" />
-              <DropdownMenuItem className="text-white hover:bg-[#1e4976]" onClick={() => setShowProfile(true)}>
-                <User className="h-4 w-4 mr-2" />
-                Meu Perfil
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-white hover:bg-[#1e4976]" onClick={() => setShowSettings(true)}>
-                <Settings className="h-4 w-4 mr-2" />
-                Configuracoes
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-white hover:bg-[#1e4976]">
-                <HelpCircle className="h-4 w-4 mr-2" />
-                Ajuda
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-white hover:bg-[#1e4976]">
-                <FileText className="h-4 w-4 mr-2" />
-                Documentacao
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-[#1e4976]" />
-              <DropdownMenuItem className="text-red-400 hover:bg-[#1e4976]">
-                <LogOut className="h-4 w-4 mr-2" />
-                Sair
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </div>
-
-      {/* Settings Dialog */}
-      <Dialog open={showSettings} onOpenChange={setShowSettings}>
-        <DialogContent className="bg-[#0d1e36] border-[#1e4976] max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-white flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              Configuracoes
-            </DialogTitle>
-            <DialogDescription className="text-[#8ca8c4]">
-              Personalize o dashboard de acordo com suas preferencias
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-6 py-4">
-            {/* Appearance */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-medium text-[#8ca8c4] uppercase tracking-wider">Aparencia</h4>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {darkMode ? <Moon className="h-4 w-4 text-[#8ca8c4]" /> : <Sun className="h-4 w-4 text-[#8ca8c4]" />}
-                  <span className="text-white">Modo Escuro</span>
-                </div>
-                <Switch checked={darkMode} onCheckedChange={setDarkMode} />
-              </div>
-            </div>
-
-            {/* Notifications */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-medium text-[#8ca8c4] uppercase tracking-wider">Notificacoes</h4>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {soundEnabled ? <Volume2 className="h-4 w-4 text-[#8ca8c4]" /> : <VolumeX className="h-4 w-4 text-[#8ca8c4]" />}
-                  <span className="text-white">Sons</span>
-                </div>
-                <Switch checked={soundEnabled} onCheckedChange={setSoundEnabled} />
-              </div>
-            </div>
-
-            {/* Data */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-medium text-[#8ca8c4] uppercase tracking-wider">Dados</h4>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <RefreshCw className="h-4 w-4 text-[#8ca8c4]" />
-                  <span className="text-white">Atualizar Automaticamente</span>
-                </div>
-                <Switch checked={autoRefresh} onCheckedChange={setAutoRefresh} />
-              </div>
-              {autoRefresh && (
-                <div className="flex items-center gap-2 pl-6">
-                  <span className="text-[#8ca8c4] text-sm">Intervalo:</span>
-                  <Select value={refreshInterval} onValueChange={setRefreshInterval}>
-                    <SelectTrigger className="w-24 h-8 bg-transparent border-[#1e4976] text-white text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#0d1e36] border-[#1e4976]">
-                      <SelectItem value="15" className="text-white">15s</SelectItem>
-                      <SelectItem value="30" className="text-white">30s</SelectItem>
-                      <SelectItem value="60" className="text-white">1min</SelectItem>
-                      <SelectItem value="300" className="text-white">5min</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-            </div>
-
-            {/* Regional */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-medium text-[#8ca8c4] uppercase tracking-wider">Regional</h4>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-[#8ca8c4]" />
-                  <span className="text-white">Idioma</span>
-                </div>
-                <Select value={language} onValueChange={setLanguage}>
-                  <SelectTrigger className="w-32 h-8 bg-transparent border-[#1e4976] text-white text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#0d1e36] border-[#1e4976]">
-                    <SelectItem value="pt-BR" className="text-white">Portugues</SelectItem>
-                    <SelectItem value="en-US" className="text-white">English</SelectItem>
-                    <SelectItem value="es-ES" className="text-white">Espanol</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Database className="h-4 w-4 text-[#8ca8c4]" />
-                  <span className="text-white">Moeda</span>
-                </div>
-                <Select value={currency} onValueChange={setCurrency}>
-                  <SelectTrigger className="w-32 h-8 bg-transparent border-[#1e4976] text-white text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#0d1e36] border-[#1e4976]">
-                    <SelectItem value="BRL" className="text-white">BRL (R$)</SelectItem>
-                    <SelectItem value="USD" className="text-white">USD ($)</SelectItem>
-                    <SelectItem value="EUR" className="text-white">EUR (E)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" className="border-[#1e4976] text-[#8ca8c4] hover:bg-[#1e4976]" onClick={() => setShowSettings(false)}>
-              Cancelar
-            </Button>
-            <Button className="bg-[#00d4aa] text-[#0a1628] hover:bg-[#00b894]" onClick={handleSaveSettings}>
-              Salvar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Profile Dialog */}
-      <Dialog open={showProfile} onOpenChange={setShowProfile}>
-        <DialogContent className="bg-[#0d1e36] border-[#1e4976] max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-white flex items-center gap-2">
-              <User className="h-5 w-5" />
-              Meu Perfil
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00d4aa] to-[#3b82f6] flex items-center justify-center">
-                <span className="text-white font-bold text-2xl">A</span>
-              </div>
-              <div>
-                <p className="text-white font-semibold">Administrador</p>
-                <p className="text-[#8ca8c4] text-sm">admin@conth.com.br</p>
-              </div>
-            </div>
-            
-            <div className="space-y-3">
-              <div>
-                <label className="text-[#8ca8c4] text-sm">Nome</label>
-                <Input defaultValue="Administrador" className="bg-transparent border-[#1e4976] text-white mt-1" />
-              </div>
-              <div>
-                <label className="text-[#8ca8c4] text-sm">Email</label>
-                <Input defaultValue="admin@conth.com.br" className="bg-transparent border-[#1e4976] text-white mt-1" />
-              </div>
-              <div>
-                <label className="text-[#8ca8c4] text-sm">Cargo</label>
-                <Input defaultValue="Gerente Financeiro" className="bg-transparent border-[#1e4976] text-white mt-1" />
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" className="border-[#1e4976] text-[#8ca8c4] hover:bg-[#1e4976]" onClick={() => setShowProfile(false)}>
-              Cancelar
-            </Button>
-            <Button className="bg-[#00d4aa] text-[#0a1628] hover:bg-[#00b894]" onClick={() => setShowProfile(false)}>
-              Salvar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </header>
   )
 }
