@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Calendar, ChevronDown, Download, RefreshCw, Settings, Bell, User, Printer, X, Check, Moon, Sun, LogOut, HelpCircle, FileText, Database, Palette, Volume2, VolumeX, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -172,18 +173,15 @@ export function DashboardHeader() {
   return (
     <header className="flex items-center justify-between px-4 lg:px-6 py-4 bg-[#0a1628] border-b border-[#1e4976]">
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00d4aa] to-[#3b82f6] flex items-center justify-center">
-            <span className="text-white font-bold text-lg">C</span>
-          </div>
-          <div className="hidden sm:block">
-            <h1 className="text-xl font-bold text-white tracking-tight">
-              CONTH
-            </h1>
-            <p className="text-[10px] text-[#8ca8c4] uppercase tracking-widest">
-              Inteligencia Financeira
-            </p>
-          </div>
+        <div className="flex items-center gap-3">
+          <Image
+            src="/conth-logo.png"
+            alt="CONTH Inteligencia Financeira"
+            width={140}
+            height={50}
+            className="h-auto w-auto max-h-[50px]"
+            priority
+          />
         </div>
       </div>
 
