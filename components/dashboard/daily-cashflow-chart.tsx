@@ -108,11 +108,19 @@ export function DailyCashflowChart() {
 
   const renderAreaChart = () => (
     <ResponsiveContainer width="100%" height={300}>
-      <AreaChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+      <ComposedChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
         <defs>
           <linearGradient id="colorSaldo" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#00d4aa" stopOpacity={0.3} />
             <stop offset="95%" stopColor="#00d4aa" stopOpacity={0} />
+          </linearGradient>
+          <linearGradient id="colorEntrada" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.4} />
+            <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+          </linearGradient>
+          <linearGradient id="colorSaida" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4} />
+            <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="#1e4976" />
@@ -121,9 +129,9 @@ export function DailyCashflowChart() {
           stroke="#8ca8c4"
           fontSize={10}
           tickFormatter={formatCurrency}
-          domain={[stats.minSaldo * 0.9, stats.maxSaldo * 1.1]}
         />
         <Tooltip content={<CustomTooltip />} />
+        <Legend />
         <ReferenceLine y={0} stroke="#ef4444" strokeDasharray="3 3" />
         <ReferenceLine
           y={stats.avgSaldo}
@@ -131,6 +139,28 @@ export function DailyCashflowChart() {
           strokeDasharray="5 5"
           label={{ value: "Media", fill: "#f59e0b", fontSize: 10 }}
         />
+        {showEntradas && (
+          <Area
+            type="monotone"
+            dataKey="entrada"
+            stroke="#22c55e"
+            fillOpacity={1}
+            fill="url(#colorEntrada)"
+            strokeWidth={2}
+            name="Entradas"
+          />
+        )}
+        {showSaidas && (
+          <Area
+            type="monotone"
+            dataKey="saida"
+            stroke="#ef4444"
+            fillOpacity={1}
+            fill="url(#colorSaida)"
+            strokeWidth={2}
+            name="Saidas"
+          />
+        )}
         <Area
           type="monotone"
           dataKey="saldo"
@@ -138,8 +168,9 @@ export function DailyCashflowChart() {
           fillOpacity={1}
           fill="url(#colorSaldo)"
           strokeWidth={2}
+          name="Saldo"
         />
-      </AreaChart>
+      </ComposedChart>
     </ResponsiveContainer>
   )
 

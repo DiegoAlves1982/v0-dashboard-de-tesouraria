@@ -75,18 +75,21 @@ export default function DashboardPage() {
                 subtitle="Liquido R$ 872,66 Mil"
                 subtitle2="% Caixa Atual +66,6%"
                 valueColor="positive"
+                description="Soma de todas as receitas no periodo selecionado, incluindo locacoes, vendas e servicos."
               />
               <KPICard
                 title="Saidas"
                 value="-R$ 438,35 Mil"
                 subtitle2="% Saidas -33,4%"
                 valueColor="negative"
+                description="Total de despesas e pagamentos realizados no periodo, incluindo folha, impostos e fornecedores."
               />
               <KPICard
                 title="Media de Saidas Mensais"
                 value="-R$ 73.058,80"
                 subtitle="Perpetuidade em Meses 11,94"
                 valueColor="negative"
+                description="Media mensal de gastos calculada com base nos ultimos 6 meses de operacao."
               />
               <KPICard
                 title="Cartao Ticket Medio"
@@ -94,6 +97,7 @@ export default function DashboardPage() {
                 trend={17.3}
                 subtitle="Ticket Medio Previsto R$ 2.336,12"
                 valueColor="positive"
+                description="Valor medio por transacao de venda/locacao no periodo analisado."
               />
             </div>
 
