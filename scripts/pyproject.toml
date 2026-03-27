@@ -1,0 +1,16 @@
+[project]
+name = "dashboard-tesouraria"
+version = "1.0.0"
+description = "Processador de dados financeiros para Dashboard de Tesouraria - Calcula KPIs, indicadores de previsibilidade, categorização de receitas/despesas"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.0.0"
+]
+
+[project.scripts]
+processar = "processar_dados:main"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0.0"
+]
