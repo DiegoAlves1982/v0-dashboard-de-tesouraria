@@ -1,0 +1,25 @@
+data,tipo,categoria,valor,descricao,cliente_fornecedor,vencimento
+2026-01-05,receita,Locação,45000.00,Locação de equipamentos,TRUCKS CONTROL,2026-01-10
+2026-01-08,receita,Venda,32000.00,Venda de peças,MARCOPOLO,2026-01-15
+2026-01-10,despesa,Operacional,8500.00,Manutenção de frota,Fornecedor A,2026-01-10
+2026-01-12,receita,Serviços,28000.00,Consultoria técnica,SCANIA,2026-01-20
+2026-01-15,despesa,Folha de Pagamento,45000.00,Salários janeiro,Folha,2026-01-15
+2026-01-18,receita,Locação,52000.00,Locação mensal,VOLVO,2026-01-25
+2026-01-20,despesa,Impostos,12000.00,Tributos mensais,Receita Federal,2026-01-20
+2026-01-22,receita,Manutenção,18000.00,Serviço de manutenção,MERCEDES-BENZ,2026-01-30
+2026-01-25,despesa,Fornecedores,22000.00,Compra de materiais,Fornecedor B,2026-01-25
+2026-01-28,receita,Venda,67000.00,Venda de equipamento,RANDON,2026-02-05
+2026-02-01,receita,Locação,48000.00,Locação de caminhões,IVECO,2026-02-10
+2026-02-05,despesa,Utilidades,3500.00,Energia e água,Concessionárias,2026-02-05
+2026-02-08,receita,Consultoria,25000.00,Projeto especial,VOLKSWAGEN,2026-02-15
+2026-02-10,despesa,Marketing,8000.00,Campanha digital,Agência,2026-02-10
+2026-02-12,receita,Serviços,35000.00,Manutenção preventiva,AGRALE,2026-02-20
+2026-02-15,despesa,Folha de Pagamento,45000.00,Salários fevereiro,Folha,2026-02-15
+2026-02-18,receita,Locação,55000.00,Locação trimestral,VOLARE,2026-02-25
+2026-02-20,despesa,Administrativo,6500.00,Despesas gerais,Diversos,2026-02-20
+2026-02-22,receita,Venda,42000.00,Venda de acessórios,TRUCKS CONTROL,2026-03-01
+2026-02-25,despesa,Financeiro,4200.00,Juros e taxas,Banco,2026-02-25
+2026-02-28,receita,Manutenção,29000.00,Reparo de frota,MARCOPOLO,2026-03-05
+2026-03-02,despesa,Impostos,15000.00,ICMS e ISS,Secretaria Fazenda,2026-03-02
+2026-03-05,receita,Locação,61000.00,Locação especial,SCANIA,2026-03-10
+2026-03-08,despesa,Operacional,11000.00,Combustível,Posto,2026-03-08
