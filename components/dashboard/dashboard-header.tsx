@@ -2,8 +2,10 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { Calendar, Download, RefreshCw, Bell, Printer, X } from "lucide-react"
+import { Calendar, Download, RefreshCw, Bell, Printer, X, Upload, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { UploadDados } from "./upload-dados"
+import { useDashboardData } from "@/contexts/dashboard-data-context"
 import {
   Select,
   SelectContent,
@@ -51,6 +53,10 @@ export function DashboardHeader() {
   const [endDate, setEndDate] = useState<Date>(new Date(2026, 2, 5))
   const [selectedCompany, setSelectedCompany] = useState("todos")
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [showUpload, setShowUpload] = useState(false)
+  
+  // Dashboard data context
+  const { setDados, isDemoData, ultimaAtualizacao, limparDados } = useDashboardData()
   
   // Notifications state
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications)
