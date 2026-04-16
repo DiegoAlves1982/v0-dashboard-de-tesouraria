@@ -145,21 +145,17 @@ export function DashboardHeader() {
 
   return (
     <header className="flex items-center justify-between px-4 lg:px-6 py-3 bg-gradient-to-r from-[#0a1628] via-[#0d1e36] to-[#0a1628] border-b border-[#1e4976] shadow-lg">
-      <div className="flex items-center gap-3 lg:gap-4 flex-shrink-0">
+      <div className="flex-shrink-0">
         <div className="relative group">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#00d4aa] to-[#00a88a] rounded-lg opacity-0 group-hover:opacity-20 transition-opacity blur" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00d4aa] to-[#00a88a] rounded-lg opacity-0 group-hover:opacity-15 transition-opacity blur" />
           <Image
-            src="/conth-logo.png"
+            src="/conth-logo-new.png"
             alt="CONTH Inteligencia Financeira"
-            width={140}
+            width={160}
             height={50}
-            className="h-auto w-auto max-h-[45px] relative z-10 transition-transform group-hover:scale-105"
+            className="h-auto w-auto max-h-[50px] relative z-10 transition-transform group-hover:scale-105"
             priority
           />
-        </div>
-        <div className="hidden sm:flex flex-col">
-          <span className="text-xs text-[#00d4aa] font-semibold uppercase tracking-wider">CONTH</span>
-          <span className="text-[10px] text-[#8ca8c4]">Inteligência Financeira</span>
         </div>
       </div>
 
