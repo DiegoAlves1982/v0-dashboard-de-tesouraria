@@ -294,6 +294,24 @@ export function DashboardHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Upload Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+            title="Importar Dados"
+            onClick={() => setShowUpload(true)}
+          >
+            <Upload className="h-4 w-4" />
+          </Button>
+
+          {isDemoData && (
+            <div className="flex items-center gap-1 px-2 py-1 bg-amber-500/20 border border-amber-500/50 rounded text-xs text-amber-400">
+              <AlertTriangle className="h-3 w-3" />
+              Dados Demo
+            </div>
+          )}
+
           {/* Notifications Popover */}
           <Popover open={showNotifications} onOpenChange={setShowNotifications}>
             <PopoverTrigger asChild>
@@ -324,67 +342,12 @@ export function DashboardHeader() {
                     >
                       Marcar todas como lidas
                     </Button>
-                  )}
-                </div>
-              </div>
-              <div className="max-h-[300px] overflow-y-auto">
-                {notifications.length === 0 ? (
-                  <div className="p-4 text-center text-[#8ca8c4]">
-                    Nenhuma notificacao
-                  </div>
-                ) : (
-                  notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`p-3 border-b border-[#1e4976]/50 hover:bg-[#1e4976]/30 cursor-pointer ${
-                        !notification.read ? "bg-[#1e4976]/20" : ""
-                      }`}
-                      onClick={() => markAsRead(notification.id)}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className={`w-2 h-2 rounded-full mt-2 ${getNotificationColor(notification.type)}`} />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <p className={`text-sm font-medium ${notification.read ? "text-[#8ca8c4]" : "text-white"}`}>
-                              {notification.title}
-                            </p>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-5 w-5 text-[#8ca8c4] hover:text-red-400"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                deleteNotification(notification.id)
-                              }}
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
-                          </div>
-                          <p className="text-xs text-[#8ca8c4] truncate">{notification.message}</p>
-                          <p className="text-xs text-[#8ca8c4]/70 mt-1">{notification.time}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-              {notifications.length > 0 && (
-                <div className="p-2 border-t border-[#1e4976]">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full text-xs text-red-400 hover:bg-[#1e4976]"
-                    onClick={clearAllNotifications}
-                  >
-                    Limpar todas
-                  </Button>
-                </div>
-              )}
-            </PopoverContent>
-          </Popover>
-
+          )}
         </div>
       </div>
+
+      {/* Upload Dialog */}
+      <UploadDados open={showUpload} onOpenChange={setShowUpload} />
     </header>
   )
 }
