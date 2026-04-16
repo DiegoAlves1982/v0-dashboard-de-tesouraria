@@ -137,7 +137,7 @@ export function ChartToolbar({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+                className="h-7 w-7 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
                 onClick={onSortAsc}
                 title="Ordenar Crescente"
               >
@@ -146,7 +146,7 @@ export function ChartToolbar({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+                className="h-7 w-7 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
                 onClick={onSortDesc}
                 title="Ordenar Decrescente"
               >
@@ -161,15 +161,15 @@ export function ChartToolbar({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+                  className="h-7 w-7 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
                   title="Filtrar"
                 >
                   <Filter className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-[#0d1e36] border-[#1e4976] min-w-[200px]">
-                <DropdownMenuLabel className="text-[#8ca8c4]">Filtros</DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-[#1e4976]" />
+              <DropdownMenuContent className="bg-[var(--card)] border-[var(--border)] min-w-[200px]">
+                <DropdownMenuLabel className="text-[var(--muted-foreground)]">Filtros</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-[var(--border)]" />
                 {localFilters.map((filter) => (
                   <DropdownMenuCheckboxItem
                     key={filter.value}
@@ -177,24 +177,14 @@ export function ChartToolbar({
                     onCheckedChange={(checked) =>
                       handleFilterChange(filter.value, checked)
                     }
-                    className="text-white hover:bg-[#1e4976] focus:bg-[#1e4976]"
+                    className="text-white hover:bg-[var(--secondary)] focus:bg-[var(--secondary)]"
                   >
                     {filter.label}
                   </DropdownMenuCheckboxItem>
                 ))}
-                <DropdownMenuSeparator className="bg-[#1e4976]" />
-                <DropdownMenuItem
-                  className="text-[#00d4aa] hover:bg-[#1e4976] focus:bg-[#1e4976]"
-                  onClick={() => {
-                    const allChecked = localFilters.map((f) => ({ ...f, checked: true }))
-                    setLocalFilters(allChecked)
-                    onFilter?.(allChecked.map((f) => f.value))
-                  }}
-                >
-                  Selecionar Todos
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="text-red-400 hover:bg-[#1e4976] focus:bg-[#1e4976]"
+              <DropdownMenuSeparator className="bg-[var(--border)]" />
+              <DropdownMenuItem
+                className="text-red-400 hover:bg-[var(--secondary)] focus:bg-[var(--secondary)]"
                   onClick={() => {
                     const allUnchecked = localFilters.map((f) => ({ ...f, checked: false }))
                     setLocalFilters(allUnchecked)
@@ -210,7 +200,7 @@ export function ChartToolbar({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+            className="h-7 w-7 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
             onClick={() => setShowTable(!showTable)}
             title={showTable ? "Ver Grafico" : "Ver Tabela"}
           >
@@ -220,7 +210,7 @@ export function ChartToolbar({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+            className="h-7 w-7 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
             onClick={handleFullscreen}
             title={isFullscreen ? "Minimizar" : "Maximizar"}
           >
@@ -236,30 +226,30 @@ export function ChartToolbar({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+                className="h-7 w-7 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
                 title="Mais opcoes"
               >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-[#0d1e36] border-[#1e4976]">
+            <DropdownMenuContent className="bg-[var(--card)] border-[var(--border)]">
               <DropdownMenuItem
-                className="text-white hover:bg-[#1e4976] focus:bg-[#1e4976]"
+                className="text-white hover:bg-[var(--secondary)] focus:bg-[var(--secondary)]"
                 onClick={onRefresh}
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Atualizar Dados
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-[#1e4976]" />
+              <DropdownMenuSeparator className="bg-[var(--border)]" />
               <DropdownMenuItem
-                className="text-white hover:bg-[#1e4976] focus:bg-[#1e4976]"
-                onClick={handleExportCSV}
+                className="text-white hover:bg-[var(--secondary)] focus:bg-[var(--secondary)]"
+                onClick={() => setShowTable(false)}
               >
-                <Download className="h-4 w-4 mr-2" />
-                Exportar CSV
+                <Eye className="h-4 w-4 mr-2" />
+                Fechar Tabela
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="text-white hover:bg-[#1e4976] focus:bg-[#1e4976]"
+                className="text-white hover:bg-[var(--secondary)] focus:bg-[var(--secondary)]"
                 onClick={handleExportJSON}
               >
                 <Download className="h-4 w-4 mr-2" />
@@ -267,7 +257,7 @@ export function ChartToolbar({
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-[#1e4976]" />
               <DropdownMenuItem
-                className="text-white hover:bg-[#1e4976] focus:bg-[#1e4976]"
+                className="text-white hover:bg-[var(--secondary)] focus:bg-[var(--secondary)]"
                 onClick={handleCopyData}
               >
                 {copied ? (
@@ -283,12 +273,12 @@ export function ChartToolbar({
       </div>
 
       {showTable && data.length > 0 && (
-        <div className="mb-4 max-h-[200px] overflow-auto rounded border border-[#1e4976]">
+        <div className="mb-4 max-h-[200px] overflow-auto rounded border border-[var(--border)]">
           <table className="w-full text-sm">
-            <thead className="bg-[#1e4976] sticky top-0">
+            <thead className="bg-[var(--border)] sticky top-0">
               <tr>
                 {Object.keys(data[0]).map((key) => (
-                  <th key={key} className="text-left p-2 text-[#8ca8c4] font-medium">
+                  <th key={key} className="text-left p-2 text-[var(--muted-foreground)] font-medium">
                     {key}
                   </th>
                 ))}
@@ -296,7 +286,7 @@ export function ChartToolbar({
             </thead>
             <tbody>
               {data.map((row, i) => (
-                <tr key={i} className="border-t border-[#1e4976]/50 hover:bg-[#1e4976]/20">
+                <tr key={i} className="border-t border-[var(--border)]/50 hover:bg-[var(--secondary)]/20">
                   {Object.values(row).map((value, j) => (
                     <td key={j} className="p-2 text-white">
                       {formatValue(value)}
@@ -310,7 +300,7 @@ export function ChartToolbar({
       )}
 
       <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
-        <DialogContent className="bg-[#0d1e36] border-[#1e4976] max-w-[90vw] max-h-[90vh] w-full">
+        <DialogContent className="bg-[var(--card)] border-[var(--border)] max-w-[90vw] max-h-[90vh] w-full">
           <DialogHeader>
             <DialogTitle className="text-white">{title}</DialogTitle>
           </DialogHeader>

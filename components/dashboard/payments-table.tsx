@@ -167,12 +167,12 @@ export function PaymentsTable() {
   }
 
   return (
-    <Card className="bg-[#0d1e36] border-[#1e4976] p-4 h-full flex flex-col">
+    <Card className="bg-[var(--card)] border-[var(--border)] p-4 h-full flex flex-col">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <h3 className="text-white font-semibold">Vencimentos</h3>
         <div className="flex items-center gap-2">
           <div className="relative">
-            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8ca8c4]" />
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]" />
             <Input
               placeholder="Buscar..."
               value={searchTerm}
@@ -180,7 +180,7 @@ export function PaymentsTable() {
                 setSearchTerm(e.target.value)
                 setCurrentPage(1)
               }}
-              className="pl-8 h-8 w-[180px] bg-[#0a1628] border-[#1e4976] text-white placeholder:text-[#8ca8c4] text-sm"
+              className="pl-8 h-8 w-[180px] bg-[var(--background)] border-[var(--border)] text-white placeholder:text-[var(--muted-foreground)] text-sm"
             />
             {searchTerm && (
               <Button
@@ -189,7 +189,7 @@ export function PaymentsTable() {
                 className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6"
                 onClick={() => setSearchTerm("")}
               >
-                <X className="h-3 w-3 text-[#8ca8c4]" />
+                <X className="h-3 w-3 text-[var(--muted-foreground)]" />
               </Button>
             )}
           </div>
@@ -199,12 +199,12 @@ export function PaymentsTable() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+                className="h-8 w-8 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
               >
                 <Filter className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-[#0d1e36] border-[#1e4976]">
+            <DropdownMenuContent className="bg-[var(--card)] border-[var(--border)]">
               <DropdownMenuCheckboxItem
                 checked={showOnlyWithValue}
                 onCheckedChange={setShowOnlyWithValue}
@@ -212,7 +212,7 @@ export function PaymentsTable() {
               >
                 Apenas com valor
               </DropdownMenuCheckboxItem>
-              <DropdownMenuSeparator className="bg-[#1e4976]" />
+              <DropdownMenuSeparator className="bg-[var(--border)]" />
               <DropdownMenuItem
                 className="text-red-400"
                 onClick={() => {
@@ -231,7 +231,7 @@ export function PaymentsTable() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+            className="h-8 w-8 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
             onClick={handleExportCSV}
             title="Exportar CSV"
           >
@@ -243,9 +243,9 @@ export function PaymentsTable() {
       <div className="flex-1 overflow-auto">
         <Table>
           <TableHeader>
-            <TableRow className="border-[#1e4976] hover:bg-transparent">
+            <TableRow className="border-[var(--border)] hover:bg-transparent">
               <TableHead
-                className="text-[#8ca8c4] font-medium cursor-pointer hover:text-white"
+                className="text-[var(--muted-foreground)] font-medium cursor-pointer hover:text-white"
                 onClick={() => handleSort("vencimento")}
               >
                 <div className="flex items-center">
@@ -253,11 +253,11 @@ export function PaymentsTable() {
                   {getSortIcon("vencimento")}
                 </div>
               </TableHead>
-              <TableHead className="text-[#8ca8c4] font-medium">
+              <TableHead className="text-[var(--muted-foreground)] font-medium">
                 Data Vencimento
               </TableHead>
               <TableHead
-                className="text-[#8ca8c4] font-medium text-right cursor-pointer hover:text-white"
+                className="text-[var(--muted-foreground)] font-medium text-right cursor-pointer hover:text-white"
                 onClick={() => handleSort("receitaTotal")}
               >
                 <div className="flex items-center justify-end">
@@ -266,7 +266,7 @@ export function PaymentsTable() {
                 </div>
               </TableHead>
               <TableHead
-                className="text-[#8ca8c4] font-medium cursor-pointer hover:text-white"
+                className="text-[var(--muted-foreground)] font-medium cursor-pointer hover:text-white"
                 onClick={() => handleSort("cliente")}
               >
                 <div className="flex items-center">
@@ -279,7 +279,7 @@ export function PaymentsTable() {
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-[#8ca8c4] py-8">
+                <TableCell colSpan={4} className="text-center text-[var(--muted-foreground)] py-8">
                   Nenhum registro encontrado
                 </TableCell>
               </TableRow>
@@ -287,7 +287,7 @@ export function PaymentsTable() {
               paginatedData.map((row, index) => (
                 <TableRow
                   key={index}
-                  className="border-[#1e4976]/50 hover:bg-[#1e4976]/20 cursor-pointer"
+                  className="border-[var(--border)]/50 hover:bg-[var(--secondary)]/20 cursor-pointer"
                 >
                   <TableCell className="text-white text-sm py-2">
                     {row.vencimento}
@@ -313,8 +313,8 @@ export function PaymentsTable() {
       </div>
 
       {/* Paginacao */}
-      <div className="mt-4 pt-3 border-t border-[#1e4976] flex items-center justify-between">
-        <div className="text-xs text-[#8ca8c4]">
+      <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between">
+        <div className="text-xs text-[var(--muted-foreground)]">
           {filteredAndSortedData.length} registros
           {searchTerm && ` (filtrado por "${searchTerm}")`}
         </div>
@@ -322,19 +322,19 @@ export function PaymentsTable() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+            className="h-7 w-7 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-sm text-[#8ca8c4]">
+          <span className="text-sm text-[var(--muted-foreground)]">
             {currentPage} / {totalPages || 1}
           </span>
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+            className="h-7 w-7 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage >= totalPages}
           >
@@ -343,8 +343,8 @@ export function PaymentsTable() {
         </div>
       </div>
 
-      <div className="mt-2 pt-2 border-t border-[#1e4976] flex items-center justify-between">
-        <span className="text-[#8ca8c4] font-medium">Total</span>
+      <div className="mt-2 pt-2 border-t border-[var(--border)] flex items-center justify-between">
+        <span className="text-[var(--muted-foreground)] font-medium">Total</span>
         <span className="text-emerald-400 font-bold text-lg">
           R$ {total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
         </span>

@@ -144,23 +144,23 @@ export function DashboardHeader() {
 
 
   return (
-    <header className="flex items-center justify-between px-4 lg:px-6 py-4 bg-[#0a1628] border-b border-[#1e4976]">
+    <header className="flex items-center justify-between px-4 lg:px-6 py-3 bg-[var(--header-bg)] border-b border-[var(--header-border)]">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3">
           <Image
             src="/conth-logo.png"
             alt="CONTH Inteligencia Financeira"
-            width={140}
-            height={50}
-            className="h-auto w-auto max-h-[50px]"
+            width={150}
+            height={52}
+            className="h-auto w-auto max-h-[52px]"
             priority
           />
         </div>
       </div>
 
       <div className="flex-1 flex justify-center px-4">
-        <div className="bg-gradient-to-r from-[#00d4aa] to-[#00a88a] px-4 lg:px-8 py-2 rounded">
-          <h2 className="text-sm lg:text-lg font-bold text-[#0a1628] uppercase tracking-wide text-center">
+        <div className="bg-[var(--conth-green)] px-4 lg:px-8 py-2 rounded-sm">
+          <h2 className="text-sm lg:text-base font-bold text-[var(--conth-navy)] uppercase tracking-widest text-center">
             Dashboard de Tesouraria e Indicadores Futuros
           </h2>
         </div>
@@ -222,24 +222,24 @@ export function DashboardHeader() {
         </div>
 
         <div className="hidden md:flex flex-col gap-1">
-          <span className="text-xs text-[#8ca8c4] uppercase tracking-wider">
+          <span className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
             Empresa
           </span>
           <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-            <SelectTrigger className="w-[140px] bg-transparent border-[#1e4976] text-white">
+            <SelectTrigger className="w-[140px] bg-transparent border-[var(--border)] text-white">
               <SelectValue placeholder="Selecione" />
             </SelectTrigger>
-            <SelectContent className="bg-[#0d1e36] border-[#1e4976]">
-              <SelectItem value="todos" className="text-white hover:bg-[#1e4976]">
+            <SelectContent className="bg-[var(--card)] border-[var(--border)]">
+              <SelectItem value="todos" className="text-white hover:bg-[var(--secondary)]">
                 Todos
               </SelectItem>
-              <SelectItem value="pr-trucks" className="text-white hover:bg-[#1e4976]">
+              <SelectItem value="pr-trucks" className="text-white hover:bg-[var(--secondary)]">
                 PR Trucks
               </SelectItem>
-              <SelectItem value="sider-trucks" className="text-white hover:bg-[#1e4976]">
+              <SelectItem value="sider-trucks" className="text-white hover:bg-[var(--secondary)]">
                 Sider Trucks
               </SelectItem>
-              <SelectItem value="pr-servicos" className="text-white hover:bg-[#1e4976]">
+              <SelectItem value="pr-servicos" className="text-white hover:bg-[var(--secondary)]">
                 PR Trucks Servicos
               </SelectItem>
             </SelectContent>
@@ -250,7 +250,7 @@ export function DashboardHeader() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-9 w-9 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+            className="h-9 w-9 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
             onClick={handleRefresh}
             title="Atualizar Dados"
           >
@@ -262,30 +262,30 @@ export function DashboardHeader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+                className="h-9 w-9 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
                 title="Exportar"
               >
                 <Download className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-[#0d1e36] border-[#1e4976]">
+            <DropdownMenuContent className="bg-[var(--card)] border-[var(--border)]">
               <DropdownMenuItem
-                className="text-white hover:bg-[#1e4976]"
+                className="text-white hover:bg-[var(--secondary)]"
                 onClick={() => handleExportAll("csv")}
               >
                 <Download className="h-4 w-4 mr-2" />
                 Exportar CSV
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="text-white hover:bg-[#1e4976]"
+                className="text-white hover:bg-[var(--secondary)]"
                 onClick={() => handleExportAll("json")}
               >
                 <Download className="h-4 w-4 mr-2" />
                 Exportar JSON
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-[#1e4976]" />
+              <DropdownMenuSeparator className="bg-[var(--border)]" />
               <DropdownMenuItem
-                className="text-white hover:bg-[#1e4976]"
+                className="text-white hover:bg-[var(--secondary)]"
                 onClick={() => handleExportAll("print")}
               >
                 <Printer className="h-4 w-4 mr-2" />
@@ -294,13 +294,31 @@ export function DashboardHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Upload Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 text-[var(--conth-green)] hover:text-white hover:bg-[var(--secondary)] border border-[var(--conth-green)]/40"
+            title="Importar Dados"
+            onClick={() => setShowUpload(true)}
+          >
+            <Upload className="h-4 w-4" />
+          </Button>
+
+          {isDemoData && (
+            <div className="flex items-center gap-1 px-2 py-1 bg-amber-500/20 border border-amber-500/50 rounded text-xs text-amber-400">
+              <AlertTriangle className="h-3 w-3" />
+              Dados Demo
+            </div>
+          )}
+
           {/* Notifications Popover */}
           <Popover open={showNotifications} onOpenChange={setShowNotifications}>
             <PopoverTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976] relative"
+                className="h-9 w-9 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)] relative"
                 title="Notificacoes"
               >
                 <Bell className="h-4 w-4" />
@@ -311,80 +329,25 @@ export function DashboardHeader() {
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80 p-0 bg-[#0d1e36] border-[#1e4976]" align="end">
-              <div className="flex items-center justify-between p-3 border-b border-[#1e4976]">
+            <PopoverContent className="w-80 p-0 bg-[var(--card)] border-[var(--border)]" align="end">
+              <div className="flex items-center justify-between p-3 border-b border-[var(--border)]">
                 <h4 className="text-white font-semibold">Notificacoes</h4>
                 <div className="flex gap-1">
                   {unreadCount > 0 && (
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 text-xs text-[#00d4aa] hover:bg-[#1e4976]"
+                      className="h-7 text-xs text-[var(--conth-green)] hover:bg-[var(--secondary)]"
                       onClick={markAllAsRead}
                     >
                       Marcar todas como lidas
                     </Button>
-                  )}
-                </div>
-              </div>
-              <div className="max-h-[300px] overflow-y-auto">
-                {notifications.length === 0 ? (
-                  <div className="p-4 text-center text-[#8ca8c4]">
-                    Nenhuma notificacao
-                  </div>
-                ) : (
-                  notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`p-3 border-b border-[#1e4976]/50 hover:bg-[#1e4976]/30 cursor-pointer ${
-                        !notification.read ? "bg-[#1e4976]/20" : ""
-                      }`}
-                      onClick={() => markAsRead(notification.id)}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className={`w-2 h-2 rounded-full mt-2 ${getNotificationColor(notification.type)}`} />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <p className={`text-sm font-medium ${notification.read ? "text-[#8ca8c4]" : "text-white"}`}>
-                              {notification.title}
-                            </p>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-5 w-5 text-[#8ca8c4] hover:text-red-400"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                deleteNotification(notification.id)
-                              }}
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
-                          </div>
-                          <p className="text-xs text-[#8ca8c4] truncate">{notification.message}</p>
-                          <p className="text-xs text-[#8ca8c4]/70 mt-1">{notification.time}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-              {notifications.length > 0 && (
-                <div className="p-2 border-t border-[#1e4976]">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full text-xs text-red-400 hover:bg-[#1e4976]"
-                    onClick={clearAllNotifications}
-                  >
-                    Limpar todas
-                  </Button>
-                </div>
-              )}
-            </PopoverContent>
-          </Popover>
-
+          )}
         </div>
       </div>
+
+      {/* Upload Dialog */}
+      <UploadDados open={showUpload} onOpenChange={setShowUpload} />
     </header>
   )
 }

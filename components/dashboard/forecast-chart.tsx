@@ -52,7 +52,7 @@ const formatYAxis = (value: number) => {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[#0d1e36] border border-[#1e4976] rounded-lg p-3 shadow-xl">
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3 shadow-xl">
         <p className="text-white font-medium mb-2">{label}</p>
         {payload.map((item: any, index: number) => (
           <p key={index} className="text-sm" style={{ color: item.color }}>
@@ -105,18 +105,18 @@ export function ForecastChart() {
         data={filteredData}
         margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="#1e4976" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
         <XAxis
           dataKey="date"
-          stroke="#8ca8c4"
-          tick={{ fill: "#8ca8c4", fontSize: 11 }}
-          axisLine={{ stroke: "#1e4976" }}
+          stroke="var(--muted-foreground)"
+          tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
+          axisLine={{ stroke: "var(--border)" }}
         />
         <YAxis
-          stroke="#8ca8c4"
-          tick={{ fill: "#8ca8c4", fontSize: 11 }}
+          stroke="var(--muted-foreground)"
+          tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
           tickFormatter={formatYAxis}
-          axisLine={{ stroke: "#1e4976" }}
+          axisLine={{ stroke: "var(--border)" }}
         />
         <Tooltip content={<CustomTooltip />} />
         <ReferenceLine
@@ -132,14 +132,14 @@ export function ForecastChart() {
           stroke="#ffffff"
           strokeWidth={2}
           dot={{ fill: "#ffffff", strokeWidth: 0, r: 3 }}
-          activeDot={{ r: 5, fill: "#00d4aa" }}
+          activeDot={{ r: 5, fill: "var(--conth-green)" }}
           name="Valor Real"
         />
         {showPrevisto && (
           <Line
             type="monotone"
             dataKey="previsto"
-            stroke="#00d4aa"
+            stroke="var(--conth-green)"
             strokeWidth={2}
             strokeDasharray="5 5"
             dot={false}
@@ -160,8 +160,8 @@ export function ForecastChart() {
         <Brush
           dataKey="date"
           height={20}
-          stroke="#1e4976"
-          fill="#0a1628"
+          stroke="var(--border)"
+          fill="var(--background)"
           travellerWidth={8}
         />
       </LineChart>
@@ -169,7 +169,7 @@ export function ForecastChart() {
   )
 
   return (
-    <Card className="bg-[#0d1e36] border-[#1e4976] p-4">
+    <Card className="bg-[var(--card)] border-[var(--border)] p-4">
       <ChartToolbar
         title="Previsao (4 Meses)"
         showSortButtons={true}
@@ -198,8 +198,8 @@ export function ForecastChart() {
           size="sm"
           className={`text-xs h-7 ${
             showPrevisto
-              ? "bg-[#00d4aa] text-[#0a1628] hover:bg-[#00d4aa]/80"
-              : "border-[#1e4976] text-[#8ca8c4] hover:bg-[#1e4976]"
+              ? "bg-[var(--conth-green)] text-[var(--conth-navy)] hover:bg-[var(--conth-green)]/80"
+              : "border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--secondary)]"
           }`}
           onClick={() => setShowPrevisto(!showPrevisto)}
         >
@@ -210,15 +210,15 @@ export function ForecastChart() {
           size="sm"
           className={`text-xs h-7 ${
             showMeta
-              ? "bg-amber-500 text-[#0a1628] hover:bg-amber-500/80"
-              : "border-[#1e4976] text-[#8ca8c4] hover:bg-[#1e4976]"
+              ? "bg-amber-500 text-[var(--conth-navy)] hover:bg-amber-500/80"
+              : "border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--secondary)]"
           }`}
           onClick={() => setShowMeta(!showMeta)}
         >
           Meta
         </Button>
         <div className="flex items-center gap-2 ml-auto">
-          <span className="text-xs text-[#8ca8c4]">Limite:</span>
+          <span className="text-xs text-[var(--muted-foreground)]">Limite:</span>
           <Slider
             value={[limitValue]}
             onValueChange={(v) => setLimitValue(v[0])}
@@ -238,48 +238,48 @@ export function ForecastChart() {
       <div className="flex items-center justify-center gap-6 mt-2">
         <div className="flex items-center gap-2">
           <div className="w-4 h-0.5 bg-white" />
-          <span className="text-xs text-[#8ca8c4]">Valor Real</span>
+          <span className="text-xs text-[var(--muted-foreground)]">Valor Real</span>
         </div>
         {showPrevisto && (
           <div className="flex items-center gap-2">
-            <div className="w-4 h-0.5 bg-[#00d4aa]" style={{ borderStyle: "dashed" }} />
-            <span className="text-xs text-[#8ca8c4]">Valor Previsto</span>
+            <div className="w-4 h-0.5 bg-[var(--conth-green)]" style={{ borderStyle: "dashed" }} />
+            <span className="text-xs text-[var(--muted-foreground)]">Valor Previsto</span>
           </div>
         )}
         {showMeta && (
           <div className="flex items-center gap-2">
             <div className="w-4 h-0.5 bg-amber-500" />
-            <span className="text-xs text-[#8ca8c4]">Meta</span>
+            <span className="text-xs text-[var(--muted-foreground)]">Meta</span>
           </div>
         )}
         <div className="flex items-center gap-2">
           <div className="w-4 h-0.5 bg-red-500" />
-          <span className="text-xs text-[#8ca8c4]">Limite</span>
+          <span className="text-xs text-[var(--muted-foreground)]">Limite</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 mt-4 pt-3 border-t border-[#1e4976] text-center">
+      <div className="grid grid-cols-4 gap-2 mt-4 pt-3 border-t border-[var(--border)] text-center">
         <div>
-          <p className="text-xs text-[#8ca8c4]">Maximo</p>
+          <p className="text-xs text-[var(--muted-foreground)]">Maximo</p>
           <p className="text-sm text-emerald-400 font-medium">
             R$ {stats.max.toLocaleString("pt-BR")}
           </p>
         </div>
         <div>
-          <p className="text-xs text-[#8ca8c4]">Minimo</p>
+          <p className="text-xs text-[var(--muted-foreground)]">Minimo</p>
           <p className="text-sm text-red-400 font-medium">
             R$ {stats.min.toLocaleString("pt-BR")}
           </p>
         </div>
         <div>
-          <p className="text-xs text-[#8ca8c4]">Media</p>
+          <p className="text-xs text-[var(--muted-foreground)]">Media</p>
           <p className="text-sm text-white font-medium">
             R$ {Math.round(stats.avg).toLocaleString("pt-BR")}
           </p>
         </div>
         <div>
-          <p className="text-xs text-[#8ca8c4]">Total</p>
-          <p className="text-sm text-[#00d4aa] font-medium">
+          <p className="text-xs text-[var(--muted-foreground)]">Total</p>
+          <p className="text-sm text-[var(--conth-green)] font-medium">
             R$ {stats.total.toLocaleString("pt-BR")}
           </p>
         </div>

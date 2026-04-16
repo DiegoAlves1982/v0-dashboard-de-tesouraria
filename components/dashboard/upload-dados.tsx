@@ -153,13 +153,13 @@ export function UploadDados({ open, onOpenChange, onDataProcessed }: UploadDados
       if (!newOpen) resetState()
       onOpenChange(newOpen)
     }}>
-      <DialogContent className="bg-[#0d1e36] border-[#1e4976] max-w-lg">
+      <DialogContent className="bg-[var(--card)] border-[var(--border)] max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-white flex items-center gap-2">
-            <Upload className="h-5 w-5 text-[#00d4aa]" />
+            <Upload className="h-5 w-5 text-[var(--conth-green)]" />
             Importar Dados Financeiros
           </DialogTitle>
-          <DialogDescription className="text-[#8ca8c4]">
+          <DialogDescription className="text-[var(--muted-foreground)]">
             Faca upload de sua planilha Excel, CSV ou JSON com os dados financeiros
           </DialogDescription>
         </DialogHeader>
@@ -167,23 +167,23 @@ export function UploadDados({ open, onOpenChange, onDataProcessed }: UploadDados
         <div className="space-y-4 py-4">
           {/* Saldo Inicial */}
           <div className="space-y-2">
-            <label className="text-sm text-[#8ca8c4]">Saldo Inicial em Caixa (opcional)</label>
+            <label className="text-sm text-[var(--muted-foreground)]">Saldo Inicial em Caixa (opcional)</label>
             <Input
               type="text"
               placeholder="Ex: 500000.00"
               value={saldoInicial}
               onChange={(e) => setSaldoInicial(e.target.value)}
-              className="bg-transparent border-[#1e4976] text-white placeholder:text-[#5a7a9a]"
+              className="bg-transparent border-[var(--border)] text-white placeholder:text-[var(--muted-foreground)]/60"
             />
           </div>
 
-          {/* Área de Drop */}
+          {/* Area de Drop */}
           {status === "idle" && (
             <div
               className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                isDragging 
-                  ? "border-[#00d4aa] bg-[#00d4aa]/10" 
-                  : "border-[#1e4976] hover:border-[#3b82f6]"
+                isDragging
+                  ? "border-[var(--conth-green)] bg-[var(--conth-green)]/10"
+                  : "border-[var(--border)] hover:border-[var(--conth-green)]/60"
               }`}
               onDragOver={(e) => {
                 e.preventDefault()
@@ -198,41 +198,41 @@ export function UploadDados({ open, onOpenChange, onDataProcessed }: UploadDados
                 onChange={handleFileSelect}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
-              
-              <FileSpreadsheet className="h-12 w-12 mx-auto mb-4 text-[#3b82f6]" />
-              
+
+              <FileSpreadsheet className="h-12 w-12 mx-auto mb-4 text-[var(--conth-green)]" />
+
               <p className="text-white font-medium mb-2">
                 Arraste sua planilha aqui
               </p>
-              <p className="text-[#8ca8c4] text-sm mb-4">
+              <p className="text-[var(--muted-foreground)] text-sm mb-4">
                 ou clique para selecionar
               </p>
-              
+
               <div className="flex flex-wrap justify-center gap-2 text-xs">
-                <span className="px-2 py-1 bg-[#1e4976] rounded text-[#8ca8c4]">CSV</span>
-                <span className="px-2 py-1 bg-[#1e4976] rounded text-[#8ca8c4]">Excel (.xlsx)</span>
-                <span className="px-2 py-1 bg-[#1e4976] rounded text-[#8ca8c4]">Excel (.xls)</span>
-                <span className="px-2 py-1 bg-[#1e4976] rounded text-[#8ca8c4]">JSON</span>
+                <span className="px-2 py-1 bg-[var(--secondary)] rounded text-[var(--muted-foreground)]">CSV</span>
+                <span className="px-2 py-1 bg-[var(--secondary)] rounded text-[var(--muted-foreground)]">Excel (.xlsx)</span>
+                <span className="px-2 py-1 bg-[var(--secondary)] rounded text-[var(--muted-foreground)]">Excel (.xls)</span>
+                <span className="px-2 py-1 bg-[var(--secondary)] rounded text-[var(--muted-foreground)]">JSON</span>
               </div>
             </div>
           )}
 
           {/* Status de Processamento */}
           {status === "processing" && (
-            <div className="border border-[#1e4976] rounded-lg p-6 text-center">
-              <Loader2 className="h-10 w-10 mx-auto mb-4 text-[#3b82f6] animate-spin" />
+            <div className="border border-[var(--border)] rounded-lg p-6 text-center">
+              <Loader2 className="h-10 w-10 mx-auto mb-4 text-[var(--conth-green)] animate-spin" />
               <p className="text-white font-medium mb-2">{file?.name}</p>
-              <p className="text-[#8ca8c4] text-sm mb-4">{message}</p>
+              <p className="text-[var(--muted-foreground)] text-sm mb-4">{message}</p>
               <Progress value={progress} className="h-2" />
             </div>
           )}
 
           {/* Sucesso */}
           {status === "success" && (
-            <div className="border border-[#00d4aa] bg-[#00d4aa]/10 rounded-lg p-6 text-center">
-              <CheckCircle2 className="h-10 w-10 mx-auto mb-4 text-[#00d4aa]" />
+            <div className="border border-[var(--conth-green)] bg-[var(--conth-green)]/10 rounded-lg p-6 text-center">
+              <CheckCircle2 className="h-10 w-10 mx-auto mb-4 text-[var(--conth-green)]" />
               <p className="text-white font-medium mb-2">Dados Importados com Sucesso!</p>
-              <p className="text-[#8ca8c4] text-sm">{message}</p>
+              <p className="text-[var(--muted-foreground)] text-sm">{message}</p>
             </div>
           )}
 
@@ -243,7 +243,7 @@ export function UploadDados({ open, onOpenChange, onDataProcessed }: UploadDados
                 <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <p className="text-white font-medium mb-1">Erro ao Processar</p>
-                  <p className="text-[#8ca8c4] text-sm mb-3">{message}</p>
+                  <p className="text-[var(--muted-foreground)] text-sm mb-3">{message}</p>
                   <Button
                     variant="outline"
                     size="sm"
@@ -257,13 +257,13 @@ export function UploadDados({ open, onOpenChange, onDataProcessed }: UploadDados
             </div>
           )}
 
-          {/* Informações sobre formato */}
-          <div className="bg-[#0a1628] border border-[#1e4976] rounded-lg p-4">
+          {/* Informacoes sobre formato */}
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-[#3b82f6] flex-shrink-0 mt-0.5" />
+              <Info className="h-5 w-5 text-[var(--conth-green)] flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="text-white text-sm font-medium mb-2">Colunas Aceitas:</p>
-                <div className="grid grid-cols-2 gap-1 text-xs text-[#8ca8c4]">
+                <div className="grid grid-cols-2 gap-1 text-xs text-[var(--muted-foreground)]">
                   <span>• data / date / dt_lanc</span>
                   <span>• valor / value / total</span>
                   <span>• tipo / natureza</span>
@@ -280,7 +280,7 @@ export function UploadDados({ open, onOpenChange, onDataProcessed }: UploadDados
           {/* Download Modelo */}
           <Button
             variant="outline"
-            className="w-full border-[#1e4976] text-[#8ca8c4] hover:bg-[#1e4976] hover:text-white"
+            className="w-full border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--secondary)] hover:text-white"
             onClick={downloadModelo}
           >
             <Download className="h-4 w-4 mr-2" />
