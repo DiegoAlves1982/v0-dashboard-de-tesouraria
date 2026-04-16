@@ -3,75 +3,96 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+  Paleta CONTH Inteligencia Financeira
+  Extraida da identidade visual da logo:
+  - Fundo principal:  #08152b  (azul marinho profundo)
+  - Card/superficie:  #0c1c35  (azul escuro medio)
+  - Borda/separador:  #193658  (azul medio)
+  - Texto secundario: #7fa3c0  (azul acinzentado)
+  - Verde primario:   #00c9a7  (verde-agua CONTH)
+  - Verde hover:      #00a88a  (verde escurecido)
+*/
+
 :root {
-  --background: #0a1628;
+  --background: #08152b;
   --foreground: #ffffff;
-  --card: #0d1e36;
+  --card: #0c1c35;
   --card-foreground: #ffffff;
-  --popover: #0d1e36;
+  --popover: #0c1c35;
   --popover-foreground: #ffffff;
-  --primary: #00d4aa;
-  --primary-foreground: #0a1628;
-  --secondary: #1a3a5c;
+  --primary: #00c9a7;
+  --primary-foreground: #08152b;
+  --secondary: #163050;
   --secondary-foreground: #ffffff;
-  --muted: #1a3a5c;
-  --muted-foreground: #8ca8c4;
-  --accent: #00d4aa;
-  --accent-foreground: #0a1628;
+  --muted: #163050;
+  --muted-foreground: #7fa3c0;
+  --accent: #00c9a7;
+  --accent-foreground: #08152b;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #1e4976;
-  --input: #1a3a5c;
-  --ring: #00d4aa;
-  --chart-1: #22c55e;
+  --border: #193658;
+  --input: #163050;
+  --ring: #00c9a7;
+  --chart-1: #00c9a7;
   --chart-2: #3b82f6;
-  --chart-3: #00d4aa;
+  --chart-3: #22c55e;
   --chart-4: #f59e0b;
   --chart-5: #ef4444;
   --radius: 0.5rem;
-  --sidebar: #0d1e36;
+  --header-bg: #08152b;
+  --header-border: #193658;
+  --conth-green: #00c9a7;
+  --conth-green-dark: #00a88a;
+  --conth-navy: #08152b;
+  --sidebar: #0c1c35;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #00d4aa;
-  --sidebar-primary-foreground: #0a1628;
-  --sidebar-accent: #1a3a5c;
+  --sidebar-primary: #00c9a7;
+  --sidebar-primary-foreground: #08152b;
+  --sidebar-accent: #163050;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #1e4976;
-  --sidebar-ring: #00d4aa;
+  --sidebar-border: #193658;
+  --sidebar-ring: #00c9a7;
 }
 
 .dark {
-  --background: #0a1628;
+  --background: #08152b;
   --foreground: #ffffff;
-  --card: #0d1e36;
+  --card: #0c1c35;
   --card-foreground: #ffffff;
-  --popover: #0d1e36;
+  --popover: #0c1c35;
   --popover-foreground: #ffffff;
-  --primary: #00d4aa;
-  --primary-foreground: #0a1628;
-  --secondary: #1a3a5c;
+  --primary: #00c9a7;
+  --primary-foreground: #08152b;
+  --secondary: #163050;
   --secondary-foreground: #ffffff;
-  --muted: #1a3a5c;
-  --muted-foreground: #8ca8c4;
-  --accent: #00d4aa;
-  --accent-foreground: #0a1628;
+  --muted: #163050;
+  --muted-foreground: #7fa3c0;
+  --accent: #00c9a7;
+  --accent-foreground: #08152b;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #1e4976;
-  --input: #1a3a5c;
-  --ring: #00d4aa;
-  --chart-1: #22c55e;
+  --border: #193658;
+  --input: #163050;
+  --ring: #00c9a7;
+  --chart-1: #00c9a7;
   --chart-2: #3b82f6;
-  --chart-3: #00d4aa;
+  --chart-3: #22c55e;
   --chart-4: #f59e0b;
   --chart-5: #ef4444;
-  --sidebar: #0d1e36;
+  --header-bg: #08152b;
+  --header-border: #193658;
+  --conth-green: #00c9a7;
+  --conth-green-dark: #00a88a;
+  --conth-navy: #08152b;
+  --sidebar: #0c1c35;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #00d4aa;
-  --sidebar-primary-foreground: #0a1628;
-  --sidebar-accent: #1a3a5c;
+  --sidebar-primary: #00c9a7;
+  --sidebar-primary-foreground: #08152b;
+  --sidebar-accent: #163050;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #1e4976;
-  --sidebar-ring: #00d4aa;
+  --sidebar-border: #193658;
+  --sidebar-ring: #00c9a7;
 }
 
 @theme inline {
