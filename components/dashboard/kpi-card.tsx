@@ -93,12 +93,12 @@ export function KPICard({
   return (
     <>
       <Card 
-        className="bg-[#0d1e36] border-[#1e4976] p-4 relative overflow-hidden transition-all duration-200 hover:border-[#00d4aa]/50 hover:shadow-lg hover:shadow-[#00d4aa]/10 cursor-pointer"
+        className="bg-[var(--card)] border-[var(--border)] p-4 relative overflow-hidden transition-all duration-200 hover:border-[var(--conth-green)]/50 hover:shadow-lg hover:shadow-[var(--conth-green)]/10 cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={() => setShowDetails(true)}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1e4976]/20 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--secondary)]/20 to-transparent pointer-events-none" />
         
         {/* Toolbar que aparece no hover */}
         <div className={cn(
@@ -111,7 +111,7 @@ export function KPICard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+                  className="h-6 w-6 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
                   onClick={(e) => {
                     e.stopPropagation()
                     handleRefresh()
@@ -120,7 +120,7 @@ export function KPICard({
                   <RefreshCw className={cn("h-3 w-3", isRefreshing && "animate-spin")} />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="bg-[#0d1e36] border-[#1e4976]">
+              <TooltipContent className="bg-[var(--card)] border-[var(--border)]">
                 <p className="text-white text-xs">Atualizar</p>
               </TooltipContent>
             </Tooltip>
@@ -131,14 +131,14 @@ export function KPICard({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+                className="h-6 w-6 text-[var(--muted-foreground)] hover:text-white hover:bg-[var(--secondary)]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <MoreHorizontal className="h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-[#0d1e36] border-[#1e4976]" onClick={(e) => e.stopPropagation()}>
-              <DropdownMenuItem className="text-white hover:bg-[#1e4976]" onClick={handleCopy}>
+            <DropdownMenuContent className="bg-[var(--card)] border-[var(--border)]" onClick={(e) => e.stopPropagation()}>
+              <DropdownMenuItem className="text-white hover:bg-[var(--secondary)]" onClick={handleCopy}>
                 {copied ? <Check className="h-4 w-4 mr-2 text-emerald-400" /> : <Copy className="h-4 w-4 mr-2" />}
                 {copied ? "Copiado!" : "Copiar Valor"}
               </DropdownMenuItem>
@@ -147,7 +147,7 @@ export function KPICard({
                 Exportar
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-[#1e4976]" />
-              <DropdownMenuItem className="text-white hover:bg-[#1e4976]" onClick={() => setShowDetails(true)}>
+              <DropdownMenuItem className="text-white hover:bg-[var(--secondary)]" onClick={() => setShowDetails(true)}>
                 <Maximize2 className="h-4 w-4 mr-2" />
                 Ver Detalhes
               </DropdownMenuItem>
@@ -182,14 +182,14 @@ export function KPICard({
                   </span>
                 )}
               </h3>
-              <p className="text-sm text-[#8ca8c4] mt-1">{title}</p>
+              <p className="text-sm text-[var(--muted-foreground)] mt-1">{title}</p>
             </div>
           </div>
           {(subtitle || subtitle2) && (
-            <div className="mt-3 pt-3 border-t border-[#1e4976]/50 space-y-1">
+            <div className="mt-3 pt-3 border-t border-[var(--border)]/50 space-y-1">
               {subtitle && (
                 <p className="text-sm">
-                  <span className="text-[#8ca8c4]">{subtitle.split(" ")[0]} </span>
+                  <span className="text-[var(--muted-foreground)]">{subtitle.split(" ")[0]} </span>
                   <span className="text-emerald-400 font-medium">
                     {subtitle.split(" ").slice(1).join(" ")}
                   </span>
@@ -197,7 +197,7 @@ export function KPICard({
               )}
               {subtitle2 && (
                 <p className="text-sm">
-                  <span className="text-[#8ca8c4]">{subtitle2.split(" ")[0]} </span>
+                  <span className="text-[var(--muted-foreground)]">{subtitle2.split(" ")[0]} </span>
                   <span
                     className={cn(
                       "font-medium",
@@ -217,14 +217,14 @@ export function KPICard({
 
       {/* Dialog de Detalhes */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="bg-[#0d1e36] border-[#1e4976] max-w-md">
+        <DialogContent className="bg-[var(--card)] border-[var(--border)] max-w-md">
           <DialogHeader>
             <DialogTitle className="text-white flex items-center justify-between">
               {title}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="text-center py-4 border-b border-[#1e4976]">
+            <div className="text-center py-4 border-b border-[var(--border)]">
               <p className={cn("text-4xl font-bold", valueColorClass[valueColor])}>
                 {value}
               </p>
@@ -240,8 +240,8 @@ export function KPICard({
             </div>
             
             {description && (
-              <div className="bg-[#1e4976]/30 rounded-lg p-3">
-                <p className="text-sm text-[#8ca8c4] flex items-start gap-2">
+              <div className="bg-[var(--secondary)]/30 rounded-lg p-3">
+                <p className="text-sm text-[var(--muted-foreground)] flex items-start gap-2">
                   <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
                   {description}
                 </p>
@@ -249,15 +249,15 @@ export function KPICard({
             )}
 
             {subtitle && (
-              <div className="flex justify-between items-center py-2 border-b border-[#1e4976]/50">
-                <span className="text-[#8ca8c4]">{subtitle.split(" ")[0]}</span>
+              <div className="flex justify-between items-center py-2 border-b border-[var(--border)]/50">
+                <span className="text-[var(--muted-foreground)]">{subtitle.split(" ")[0]}</span>
                 <span className="text-emerald-400 font-medium">{subtitle.split(" ").slice(1).join(" ")}</span>
               </div>
             )}
             
             {subtitle2 && (
-              <div className="flex justify-between items-center py-2 border-b border-[#1e4976]/50">
-                <span className="text-[#8ca8c4]">{subtitle2.split(" ")[0]}</span>
+              <div className="flex justify-between items-center py-2 border-b border-[var(--border)]/50">
+                <span className="text-[var(--muted-foreground)]">{subtitle2.split(" ")[0]}</span>
                 <span className={cn(
                   "font-medium",
                   subtitle2.includes("-") || subtitle2.includes("V") ? "text-red-400" : "text-emerald-400"
@@ -270,7 +270,7 @@ export function KPICard({
             <div className="flex gap-2 pt-4">
               <Button
                 variant="outline"
-                className="flex-1 border-[#1e4976] text-[#8ca8c4] hover:bg-[#1e4976]"
+                className="flex-1 border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--secondary)]"
                 onClick={handleCopy}
               >
                 {copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
@@ -278,7 +278,7 @@ export function KPICard({
               </Button>
               <Button
                 variant="outline"
-                className="flex-1 border-[#1e4976] text-[#8ca8c4] hover:bg-[#1e4976]"
+                className="flex-1 border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--secondary)]"
                 onClick={handleExport}
               >
                 <Download className="h-4 w-4 mr-2" />
