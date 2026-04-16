@@ -144,29 +144,37 @@ export function DashboardHeader() {
 
 
   return (
-    <header className="flex items-center justify-between px-4 lg:px-6 py-4 bg-[#0a1628] border-b border-[#1e4976]">
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-3">
+    <header className="flex items-center justify-between px-4 lg:px-6 py-3 bg-gradient-to-r from-[#0a1628] via-[#0d1e36] to-[#0a1628] border-b border-[#1e4976] shadow-lg">
+      <div className="flex items-center gap-3 lg:gap-4 flex-shrink-0">
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00d4aa] to-[#00a88a] rounded-lg opacity-0 group-hover:opacity-20 transition-opacity blur" />
           <Image
             src="/conth-logo.png"
             alt="CONTH Inteligencia Financeira"
             width={140}
             height={50}
-            className="h-auto w-auto max-h-[50px]"
+            className="h-auto w-auto max-h-[45px] relative z-10 transition-transform group-hover:scale-105"
             priority
           />
+        </div>
+        <div className="hidden sm:flex flex-col">
+          <span className="text-xs text-[#00d4aa] font-semibold uppercase tracking-wider">CONTH</span>
+          <span className="text-[10px] text-[#8ca8c4]">Inteligência Financeira</span>
         </div>
       </div>
 
       <div className="flex-1 flex justify-center px-4">
-        <div className="bg-gradient-to-r from-[#00d4aa] to-[#00a88a] px-4 lg:px-8 py-2 rounded">
-          <h2 className="text-sm lg:text-lg font-bold text-[#0a1628] uppercase tracking-wide text-center">
-            Dashboard de Tesouraria e Indicadores Futuros
-          </h2>
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00d4aa]/10 to-[#00a88a]/10 rounded-lg blur" />
+          <div className="relative bg-gradient-to-r from-[#00d4aa] to-[#00a88a] px-4 lg:px-8 py-2.5 rounded-lg shadow-md shadow-[#00d4aa]/20">
+            <h2 className="text-xs lg:text-base font-bold text-[#0a1628] uppercase tracking-widest text-center whitespace-nowrap">
+              Dashboard de Tesouraria
+            </h2>
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 lg:gap-6">
+      <div className="flex items-center gap-1 lg:gap-4 flex-shrink-0">
         <div className="hidden lg:flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <Popover>
@@ -174,10 +182,10 @@ export function DashboardHeader() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-transparent border-[#1e4976] text-white hover:bg-[#1e4976] hover:text-white"
+                  className="bg-[#1a3a5c]/60 border-[#1e4976] text-[#00d4aa] hover:bg-[#1e4976] hover:text-[#00d4aa] transition-colors"
                 >
-                  <Calendar className="h-4 w-4 mr-2" />
-                  {format(startDate, "dd/MM/yyyy")}
+                  <Calendar className="h-4 w-4 mr-1.5" />
+                  {format(startDate, "dd/MM")}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0 bg-[#0d1e36] border-[#1e4976]">
@@ -190,15 +198,16 @@ export function DashboardHeader() {
                 />
               </PopoverContent>
             </Popover>
+            <span className="text-[#8ca8c4] text-xs">a</span>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-transparent border-[#1e4976] text-white hover:bg-[#1e4976] hover:text-white"
+                  className="bg-[#1a3a5c]/60 border-[#1e4976] text-[#00d4aa] hover:bg-[#1e4976] hover:text-[#00d4aa] transition-colors"
                 >
-                  <Calendar className="h-4 w-4 mr-2" />
-                  {format(endDate, "dd/MM/yyyy")}
+                  {format(endDate, "dd/MM")}
+                  <Calendar className="h-4 w-4 ml-1.5" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0 bg-[#0d1e36] border-[#1e4976]">
@@ -217,16 +226,16 @@ export function DashboardHeader() {
             onValueChange={setDateRange}
             max={100}
             step={1}
-            className="w-[200px]"
+            className="w-[180px]"
           />
         </div>
 
         <div className="hidden md:flex flex-col gap-1">
-          <span className="text-xs text-[#8ca8c4] uppercase tracking-wider">
+          <span className="text-xs text-[#00d4aa] font-semibold uppercase tracking-wider">
             Empresa
           </span>
           <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-            <SelectTrigger className="w-[140px] bg-transparent border-[#1e4976] text-white">
+            <SelectTrigger className="w-[130px] bg-[#1a3a5c]/60 border-[#1e4976] text-white hover:bg-[#1e4976] transition-colors">
               <SelectValue placeholder="Selecione" />
             </SelectTrigger>
             <SelectContent className="bg-[#0d1e36] border-[#1e4976]">
@@ -246,11 +255,11 @@ export function DashboardHeader() {
           </Select>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           <Button
             variant="ghost"
             size="icon"
-            className="h-9 w-9 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+            className="h-9 w-9 text-[#8ca8c4] hover:text-[#00d4aa] hover:bg-[#1e4976]/50 transition-colors"
             onClick={handleRefresh}
             title="Atualizar Dados"
           >
@@ -262,7 +271,7 @@ export function DashboardHeader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976]"
+                className="h-9 w-9 text-[#8ca8c4] hover:text-[#00d4aa] hover:bg-[#1e4976]/50 transition-colors"
                 title="Exportar"
               >
                 <Download className="h-4 w-4" />
@@ -270,14 +279,14 @@ export function DashboardHeader() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-[#0d1e36] border-[#1e4976]">
               <DropdownMenuItem
-                className="text-white hover:bg-[#1e4976]"
+                className="text-white hover:bg-[#1e4976] cursor-pointer"
                 onClick={() => handleExportAll("csv")}
               >
                 <Download className="h-4 w-4 mr-2" />
                 Exportar CSV
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="text-white hover:bg-[#1e4976]"
+                className="text-white hover:bg-[#1e4976] cursor-pointer"
                 onClick={() => handleExportAll("json")}
               >
                 <Download className="h-4 w-4 mr-2" />
@@ -285,7 +294,7 @@ export function DashboardHeader() {
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-[#1e4976]" />
               <DropdownMenuItem
-                className="text-white hover:bg-[#1e4976]"
+                className="text-white hover:bg-[#1e4976] cursor-pointer"
                 onClick={() => handleExportAll("print")}
               >
                 <Printer className="h-4 w-4 mr-2" />
@@ -300,7 +309,7 @@ export function DashboardHeader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 text-[#8ca8c4] hover:text-white hover:bg-[#1e4976] relative"
+                className="h-9 w-9 text-[#8ca8c4] hover:text-[#00d4aa] hover:bg-[#1e4976]/50 transition-colors relative"
                 title="Notificacoes"
               >
                 <Bell className="h-4 w-4" />
@@ -312,17 +321,20 @@ export function DashboardHeader() {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80 p-0 bg-[#0d1e36] border-[#1e4976]" align="end">
-              <div className="flex items-center justify-between p-3 border-b border-[#1e4976]">
-                <h4 className="text-white font-semibold">Notificacoes</h4>
+              <div className="flex items-center justify-between p-3 border-b border-[#1e4976] bg-gradient-to-r from-[#1a3a5c] to-[#0d1e36]">
+                <h4 className="text-white font-semibold flex items-center gap-2">
+                  <span className="text-[#00d4aa]">●</span>
+                  Notificações
+                </h4>
                 <div className="flex gap-1">
                   {unreadCount > 0 && (
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 text-xs text-[#00d4aa] hover:bg-[#1e4976]"
+                      className="h-7 text-xs text-[#00d4aa] hover:bg-[#1e4976] hover:text-[#00d4aa]"
                       onClick={markAllAsRead}
                     >
-                      Marcar todas como lidas
+                      Marcar todas
                     </Button>
                   )}
                 </div>
@@ -330,28 +342,28 @@ export function DashboardHeader() {
               <div className="max-h-[300px] overflow-y-auto">
                 {notifications.length === 0 ? (
                   <div className="p-4 text-center text-[#8ca8c4]">
-                    Nenhuma notificacao
+                    Nenhuma notificação
                   </div>
                 ) : (
                   notifications.map((notification) => (
                     <div
                       key={notification.id}
-                      className={`p-3 border-b border-[#1e4976]/50 hover:bg-[#1e4976]/30 cursor-pointer ${
+                      className={`p-3 border-b border-[#1e4976]/50 hover:bg-[#1e4976]/40 cursor-pointer transition-colors ${
                         !notification.read ? "bg-[#1e4976]/20" : ""
                       }`}
                       onClick={() => markAsRead(notification.id)}
                     >
                       <div className="flex items-start gap-3">
-                        <div className={`w-2 h-2 rounded-full mt-2 ${getNotificationColor(notification.type)}`} />
+                        <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${getNotificationColor(notification.type)}`} />
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <p className={`text-sm font-medium ${notification.read ? "text-[#8ca8c4]" : "text-white"}`}>
+                          <div className="flex items-center justify-between gap-2">
+                            <p className={`text-sm font-medium ${notification.read ? "text-[#8ca8c4]" : "text-[#00d4aa]"}`}>
                               {notification.title}
                             </p>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-5 w-5 text-[#8ca8c4] hover:text-red-400"
+                              className="h-5 w-5 text-[#8ca8c4] hover:text-red-400 flex-shrink-0"
                               onClick={(e) => {
                                 e.stopPropagation()
                                 deleteNotification(notification.id)
@@ -373,7 +385,7 @@ export function DashboardHeader() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="w-full text-xs text-red-400 hover:bg-[#1e4976]"
+                    className="w-full text-xs text-red-400 hover:bg-[#1e4976] hover:text-red-400"
                     onClick={clearAllNotifications}
                   >
                     Limpar todas
@@ -382,7 +394,6 @@ export function DashboardHeader() {
               )}
             </PopoverContent>
           </Popover>
-
         </div>
       </div>
     </header>
